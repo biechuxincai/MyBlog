@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Git的基础命令详解</title>
+    <url>/MyBlog/2024/08/28/Git%E7%9A%84%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>Git 是一个强大的分布式版本控制系统，常用于管理项目中的代码和文档。掌握 Git 的基础命令对于开发者来说至关重要。以下是 Git 中一些常用的基础命令及其详解：</p>
+<h3 id="1-git-init"><a href="#1-git-init" class="headerlink" title="1. git init"></a>1. <strong>git init</strong></h3><ul>
+<li><strong>作用</strong>：初始化一个新的 Git 仓库。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：这个命令在当前目录中创建一个新的 <code>.git</code> 目录，初始化一个空的 Git 仓库。如果你已经有一个项目，可以在项目的根目录中运行该命令，将它变成一个 Git 仓库。</li>
+</ul>
+<h3 id="2-git-clone"><a href="#2-git-clone" class="headerlink" title="2. git clone"></a>2. <strong>git clone</strong></h3><ul>
+<li><strong>作用</strong>：克隆一个远程仓库到本地。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> &lt;repository_url&gt;</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：该命令会复制指定的远程仓库到本地，并创建一个指向远程仓库的默认名称为 <code>origin</code> 的链接。例如：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/user/repo.git</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="3-git-status"><a href="#3-git-status" class="headerlink" title="3. git status"></a>3. <strong>git status</strong></h3><ul>
+<li><strong>作用</strong>：查看工作目录和暂存区的状态。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：显示未跟踪的文件、已修改但未暂存的文件，以及准备提交的文件。它是开发者在操作前经常使用的命令，用于检查当前项目状态。</li>
+</ul>
+<h3 id="4-git-add"><a href="#4-git-add" class="headerlink" title="4. git add"></a>4. <strong>git add</strong></h3><ul>
+<li><strong>作用</strong>：将更改添加到暂存区（Stage）。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git add &lt;file_name&gt;</span><br><span class="line">git add .</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git add</code> 命令将指定的文件或目录的更改添加到暂存区，准备提交。如果使用 <code>git add .</code>，则会添加当前目录下所有更改的文件。</li>
+</ul>
+<h3 id="5-git-commit"><a href="#5-git-commit" class="headerlink" title="5. git commit"></a>5. <strong>git commit</strong></h3><ul>
+<li><strong>作用</strong>：提交暂存区中的更改到本地仓库。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git commit -m <span class="string">&quot;commit message&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git commit</code> 将暂存区中的内容记录到本地仓库。<code>-m</code> 选项允许你添加一条提交信息，简要描述这次提交的更改内容。</li>
+</ul>
+<h3 id="6-git-log"><a href="#6-git-log" class="headerlink" title="6. git log"></a>6. <strong>git log</strong></h3><ul>
+<li><strong>作用</strong>：查看提交历史。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：显示项目的提交历史，按时间倒序排列。<code>git log</code> 还可以搭配很多选项，比如 <code>--oneline</code>（简短输出）、<code>--graph</code>（显示提交图）等。</li>
+</ul>
+<h3 id="7-git-branch"><a href="#7-git-branch" class="headerlink" title="7. git branch"></a>7. <strong>git branch</strong></h3><ul>
+<li><strong>作用</strong>：列出、创建或删除分支。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch       <span class="comment"># 列出所有本地分支</span></span><br><span class="line">git branch &lt;branch_name&gt;   <span class="comment"># 创建一个新分支</span></span><br><span class="line">git branch -d &lt;branch_name&gt; <span class="comment"># 删除本地分支</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git branch</code> 是用于管理分支的命令。通过它，你可以查看当前所有分支、创建新的分支或删除不需要的分支。</li>
+</ul>
+<h3 id="8-git-checkout"><a href="#8-git-checkout" class="headerlink" title="8. git checkout"></a>8. <strong>git checkout</strong></h3><ul>
+<li><strong>作用</strong>：切换分支或检出文件。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout &lt;branch_name&gt;</span><br><span class="line">git checkout -b &lt;new_branch_name&gt;</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git checkout</code> 常用于切换分支。<code>-b</code> 选项则用于创建并切换到一个新的分支。此外，它也可以用于检出指定文件的某个版本。</li>
+</ul>
+<h3 id="9-git-merge"><a href="#9-git-merge" class="headerlink" title="9. git merge"></a>9. <strong>git merge</strong></h3><ul>
+<li><strong>作用</strong>：合并指定分支到当前分支。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git merge &lt;branch_name&gt;</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git merge</code> 将指定分支的历史和内容合并到当前分支。如果存在冲突，Git 会提示你手动解决冲突。</li>
+</ul>
+<h3 id="10-git-pull"><a href="#10-git-pull" class="headerlink" title="10. git pull"></a>10. <strong>git pull</strong></h3><ul>
+<li><strong>作用</strong>：从远程仓库拉取更新并与本地代码合并。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git pull &lt;remote_name&gt; &lt;branch_name&gt;</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git pull</code> 是 <code>git fetch</code> 和 <code>git merge</code> 的组合命令。它从远程仓库拉取最新的提交，并将它们合并到当前分支。常见用法是：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git pull origin main</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="11-git-push"><a href="#11-git-push" class="headerlink" title="11. git push"></a>11. <strong>git push</strong></h3><ul>
+<li><strong>作用</strong>：将本地提交推送到远程仓库。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git push &lt;remote_name&gt; &lt;branch_name&gt;</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git push</code> 将本地的提交上传到远程仓库对应的分支上。一般情况下，你会将更改推送到 <code>origin</code> 仓库的 <code>main</code> 或 <code>master</code> 分支上：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git push origin main</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="12-git-remote"><a href="#12-git-remote" class="headerlink" title="12. git remote"></a>12. <strong>git remote</strong></h3><ul>
+<li><strong>作用</strong>：管理远程仓库。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote -v   <span class="comment"># 查看远程仓库</span></span><br><span class="line">git remote add &lt;name&gt; &lt;url&gt;  <span class="comment"># 添加远程仓库</span></span><br><span class="line">git remote <span class="built_in">rm</span> &lt;name&gt;  <span class="comment"># 删除远程仓库</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git remote</code> 用于查看、添加、删除远程仓库。开发者可以使用 <code>git remote</code> 管理与多个远程仓库的链接。</li>
+</ul>
+<h3 id="13-git-fetch"><a href="#13-git-fetch" class="headerlink" title="13. git fetch"></a>13. <strong>git fetch</strong></h3><ul>
+<li><strong>作用</strong>：从远程仓库获取最新的提交记录，不合并到本地。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git fetch &lt;remote_name&gt;</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git fetch</code> 从远程仓库获取最新的更新，但不会自动合并到当前分支。你可以手动查看并选择是否合并这些更改。</li>
+</ul>
+<h3 id="14-git-reset"><a href="#14-git-reset" class="headerlink" title="14. git reset"></a>14. <strong>git reset</strong></h3><ul>
+<li><strong>作用</strong>：撤销提交或重置暂存区和工作区。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git reset --hard &lt;commit_hash&gt;  <span class="comment"># 重置到指定的提交，并丢弃所有更改</span></span><br><span class="line">git reset --soft &lt;commit_hash&gt;  <span class="comment"># 重置到指定的提交，但保留更改在暂存区</span></span><br><span class="line">git reset HEAD &lt;file&gt;  <span class="comment"># 取消暂存指定的文件</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git reset</code> 用于撤销提交或重置文件状态，具体行为取决于使用的选项。<code>--hard</code> 会丢弃所有未提交的更改，<code>--soft</code> 则保留这些更改。</li>
+</ul>
+<h3 id="15-git-revert"><a href="#15-git-revert" class="headerlink" title="15. git revert"></a>15. <strong>git revert</strong></h3><ul>
+<li><strong>作用</strong>：创建一个新的提交，用于撤销指定的提交。</li>
+<li><strong>用法</strong>：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git revert &lt;commit_hash&gt;</span><br></pre></td></tr></table></figure></li>
+<li><strong>详解</strong>：<code>git revert</code> 通过创建一个新的提交来撤销某个已提交的更改，这样可以保留项目的历史完整性。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>掌握这些 Git 的基础命令将帮助你在项目开发中有效地管理代码、追踪变更、协同工作。随着经验的积累，你还会遇到更多高级命令和用法，这些命令是学习 Git 的重要基石。</p>
+]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/MyBlog/2024/08/28/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>test</title>
+    <url>/MyBlog/2024/09/17/test/</url>
+    <content><![CDATA[<h1 id="testtest"><a href="#testtest" class="headerlink" title="testtest"></a>testtest</h1>]]></content>
+      <categories>
+        <category>test</category>
+      </categories>
+      <tags>
+        <tag>test</tag>
+      </tags>
+  </entry>
+</search>
