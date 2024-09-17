@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>Git的基础命令详解</title>
-    <url>/MyBlog/2024/08/28/Git%E7%9A%84%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
+    <url>/2024/08/28/Git%E7%9A%84%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<p>Git 是一个强大的分布式版本控制系统，常用于管理项目中的代码和文档。掌握 Git 的基础命令对于开发者来说至关重要。以下是 Git 中一些常用的基础命令及其详解：</p>
 <h3 id="1-git-init"><a href="#1-git-init" class="headerlink" title="1. git init"></a>1. <strong>git init</strong></h3><ul>
 <li><strong>作用</strong>：初始化一个新的 Git 仓库。</li>
@@ -90,7 +90,7 @@
   </entry>
   <entry>
     <title>Hello World</title>
-    <url>/MyBlog/2024/08/28/hello-world/</url>
+    <url>/2024/08/28/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
 <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 
@@ -108,7 +108,7 @@
   </entry>
   <entry>
     <title>test</title>
-    <url>/MyBlog/2024/09/17/test/</url>
+    <url>/2024/09/17/test/</url>
     <content><![CDATA[<h1 id="testtest"><a href="#testtest" class="headerlink" title="testtest"></a>testtest</h1>]]></content>
       <categories>
         <category>test</category>
