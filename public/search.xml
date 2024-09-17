@@ -106,4 +106,15 @@
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
   </entry>
+  <entry>
+    <title>test</title>
+    <url>/MyBlog/2024/09/17/test/</url>
+    <content><![CDATA[<h1 id="testtest"><a href="#testtest" class="headerlink" title="testtest"></a>testtest</h1>]]></content>
+      <categories>
+        <category>test</category>
+      </categories>
+      <tags>
+        <tag>test</tag>
+      </tags>
+  </entry>
 </search>
