@@ -76,11 +76,6 @@
 </div>
 {%- endif %}
 
-{%- if theme.footer.powered %}
-  <div class="powered-by">
-    {%- set next_site = 'https://theme-next.js.org' if theme.scheme === 'Gemini' else 'https://theme-next.js.org/' + theme.scheme | lower + '/' %}
-    {{- __('footer.powered', next_url('https://hexo.io', 'Hexo') + ' & ' + next_url(next_site, 'NexT.' + theme.scheme)) }}
-  </div>
-{%- endif %}
+
 
 {{- next_inject('footer') }}
