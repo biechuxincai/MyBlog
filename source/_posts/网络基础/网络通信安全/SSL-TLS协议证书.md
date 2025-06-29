@@ -1,7 +1,7 @@
 ---
 title: SSL/TLS协议
 toc: true
-description: SSL/TLS 是保障网络通信安全的核心协议，而 **证书** 在其中起到了身份认证与密钥协商的重要作用。
+description: SSL/TLS 是保障网络通信安全的核心协议，而证书在其中起到了身份认证与密钥协商的重要作用。
 tags:
   - 网络
   - 协议

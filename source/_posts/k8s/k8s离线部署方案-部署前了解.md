@@ -1,5 +1,5 @@
 ---
-title: k8s离线部署方案-01
+title: k8s离线部署方案-部署前了解
 toc: true
 description: 理解 Kubernetes 的组件部署与初始化流程，对于掌握集群原理、进行集群维护和故障排查是非常关键的。
 tags:

@@ -1,5 +1,5 @@
 ---
-title: k8s离线部署方案-02
+title: k8s离线部署方案-二进制部署与容器部署介绍
 toc: true
 description: 二进制或容器化部署 Kubernetes（手动部署） 和使用 kubeadm + 容器镜像（自动部署）对比
 tags:

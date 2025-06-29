@@ -1,7 +1,7 @@
 ---
 title: 证书自签与CA签发
 toc: true
-description: 我们通过一系列 `openssl` 命令**手动模拟一次 TLS 证书生成 + 握手验证流程**。整个流程可分为 3 个部分：
+description: 我们通过一系列 `openssl` 命令手动模拟一次 TLS 证书生成 + 握手验证流程。整个流程可分为 3 个部分：
 tags:
   - 网络
 categories:
