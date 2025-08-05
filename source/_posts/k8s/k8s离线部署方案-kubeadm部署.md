@@ -244,6 +244,66 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 EOF
 sudo systemctl restart docker
 ```
+记得创建docker用户组
+
+#### 1. **创建 `docker` 用户组（如果还没有）**
+
+```bash
+sudo groupadd docker
+```
+
+> 如果提示 “group already exists”，说明该组已经存在，可以跳过这一步。
+
+---
+
+#### 2. **将当前用户加入 `docker` 组**
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+> `$USER` 是当前用户名的环境变量。你也可以直接替换为具体用户名，如：
+>
+> ```bash
+> sudo usermod -aG docker kaixinbu
+> ```
+
+---
+
+#### 3. **重新登录或刷新组成员身份**
+
+要使组变更生效，有两种方式：
+
+* 登出并重新登录系统（推荐）
+* 或使用以下命令刷新当前 shell 的组信息：
+
+```bash
+newgrp docker
+```
+
+---
+
+#### 4. **验证是否生效**
+
+```bash
+docker version
+```
+
+或者：
+
+```bash
+docker ps
+```
+
+如果没有 `permission denied`，说明配置成功，可以正常使用 Docker 命令。
+
+---
+
+### ❗ 补充说明
+
+* 默认情况下，Docker 守护进程（`dockerd`）是以 `root` 身份运行的；非 `root` 用户如果想访问 Docker socket（通常是 `/var/run/docker.sock`），就必须加入 `docker` 用户组。
+* 使用 `docker` 组等同于拥有 `root` 权限，请谨慎授予该组权限。
+
 
 #### 创建私有 Docker Registry
 
@@ -314,7 +374,7 @@ sudo systemctl enable kubelet
 cd images
 for img in *.tar; do sudo docker load -i $img; done
 ```
-
+可以让ai批量生成修改成自己当前注册地址并上传
 ### 五、初始化 Master
 
 #### 1. 配置 kubeadm 模板
