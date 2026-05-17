@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="完整演示一次 TLS（SSL）握手的全过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TLS（SSL）握手的全过程">
+<meta property="og:url" content="http://example.com/2025/06/15/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/TLS%EF%BC%88SSL%EF%BC%89%E6%8F%A1%E6%89%8B%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="完整演示一次 TLS（SSL）握手的全过程">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-15T03:23:26.000Z">
+<meta property="article:modified_time" content="2026-05-17T09:16:00.333Z">
+<meta property="article:author" content="Biechuxincai">
+<meta property="article:tag" content="网络">
+<meta property="article:tag" content="协议">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/06/15/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/TLS%EF%BC%88SSL%EF%BC%89%E6%8F%A1%E6%89%8B%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/06/15/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/TLS%EF%BC%88SSL%EF%BC%89%E6%8F%A1%E6%89%8B%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/","path":"2025/06/15/网络基础/网络通信安全/TLS（SSL）握手的全过程/","title":"TLS（SSL）握手的全过程"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>TLS（SSL）握手的全过程 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E5%9C%BA%E6%99%AF%E8%AE%BE%E5%AE%9A"><span class="nav-number">1.</span> <span class="nav-text">🧩 场景设定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%90-TLS-1-2-%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3%EF%BC%88%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8C%E6%9C%8D%E5%8A%A1%E7%AB%AF%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">🔐 TLS 1.2 握手过程详解（客户端和服务端）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B8-%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9AClientHello"><span class="nav-number">2.1.</span> <span class="nav-text">🔸 第一步：ClientHello</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B8-%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AServerHello-Certificate"><span class="nav-number">2.2.</span> <span class="nav-text">🔸 第二步：ServerHello + Certificate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B8-%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E5%AF%86%E9%92%A5%E5%8D%8F%E5%95%86%EF%BC%88PreMaster-Secret%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">🔸 第三步：密钥协商（PreMaster Secret）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B8-%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E5%AE%8C%E6%88%90%E6%8F%A1%E6%89%8B"><span class="nav-number">2.4.</span> <span class="nav-text">🔸 第四步：完成握手</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%A6-%E6%8F%A1%E6%89%8B%E5%AE%8C%E6%88%90%E5%90%8E%EF%BC%8C%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1%E5%BC%80%E5%A7%8B"><span class="nav-number">3.</span> <span class="nav-text">📦 握手完成后，数据通信开始</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9A%A1%EF%B8%8F-TLS-1-3-%E7%9A%84%E5%8F%98%E5%8C%96%EF%BC%88%E5%AF%B9%E6%AF%94%E4%BC%98%E5%8C%96%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">⚡️ TLS 1.3 的变化（对比优化）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%AA-%E8%A1%A5%E5%85%85%EF%BC%9A%E5%A6%82%E4%BD%95%E6%8A%93%E5%8C%85%E8%A7%82%E5%AF%9F-TLS-%E6%8F%A1%E6%89%8B%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">🧪 补充：如何抓包观察 TLS 握手？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">🧠 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/15/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/TLS%EF%BC%88SSL%EF%BC%89%E6%8F%A1%E6%89%8B%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="TLS（SSL）握手的全过程 | Just do it">
+      <meta itemprop="description" content="完整演示一次 TLS（SSL）握手的全过程">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TLS（SSL）握手的全过程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-15 11:23:26" itemprop="dateCreated datePublished" datetime="2025-06-15T11:23:26+08:00">2025-06-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-05-17 17:16:00" itemprop="dateModified" datetime="2026-05-17T17:16:00+08:00">2026-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">网络</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">完整演示一次 TLS（SSL）握手的全过程</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>我们来<strong>完整演示一次 TLS（SSL）握手的全过程</strong>，以 <strong>TLS 1.2&#x2F;1.3 常见流程</strong>为核心，分阶段说明每一步发生了什么，涉及了哪些技术原理和数据交换。</p>
+<hr>
+<h2 id="🧩-场景设定"><a href="#🧩-场景设定" class="headerlink" title="🧩 场景设定"></a>🧩 场景设定</h2><p>你在浏览器访问：<a href="https://example.com/">https://example.com</a><br>客户端：浏览器<br>服务端：部署了 TLS 证书的 Web 服务器（如 Nginx）</p>
+<p>我们以 <strong>TLS 1.2</strong> 为主讲解，因为其握手更复杂、可理解性强，后面再补充 TLS 1.3 的优化。</p>
+<hr>
+<h2 id="🔐-TLS-1-2-握手过程详解（客户端和服务端）"><a href="#🔐-TLS-1-2-握手过程详解（客户端和服务端）" class="headerlink" title="🔐 TLS 1.2 握手过程详解（客户端和服务端）"></a>🔐 TLS 1.2 握手过程详解（客户端和服务端）</h2><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">客户端                          服务端</span><br><span class="line">  |<span class="string">   ---- ClientHello --------&gt;   </span>|</span><br><span class="line">  |<span class="string">                                </span>|</span><br><span class="line">  |<span class="string">   &lt;---- ServerHello --------   </span>|</span><br><span class="line">  |<span class="string">   &lt;---- Certificate --------   </span>|</span><br><span class="line">  |<span class="string">   &lt;---- ServerHelloDone ----  </span>|</span><br><span class="line">  |<span class="string">                                </span>|</span><br><span class="line">  |<span class="string"> -- PreMasterSecret加密发送 --&gt; </span>|</span><br><span class="line">  |<span class="string">                                </span>|</span><br><span class="line">  |<span class="string"> &lt;-- 服务器计算共享密钥 ------- </span>|</span><br><span class="line">  |<span class="string"> -- ChangeCipherSpec ---------&gt; </span>|</span><br><span class="line">  |<span class="string"> -- Finished -----------------&gt; </span>|</span><br><span class="line">  |<span class="string">   &lt;---- ChangeCipherSpec ---- </span>|</span><br><span class="line">  |<span class="string">   &lt;---- Finished ------------ </span>|</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🔸-第一步：ClientHello"><a href="#🔸-第一步：ClientHello" class="headerlink" title="🔸 第一步：ClientHello"></a>🔸 第一步：ClientHello</h3><p>浏览器发出 <code>ClientHello</code> 请求，内容包括：</p>
+<ul>
+<li>支持的 TLS 版本（如 TLS 1.2）</li>
+<li>支持的加密算法（Cipher Suites）</li>
+<li>客户端生成的随机数 <code>client_random</code></li>
+<li>支持的压缩算法</li>
+<li>可选：支持的扩展（如 SNI、ALPN）</li>
+</ul>
+<hr>
+<h3 id="🔸-第二步：ServerHello-Certificate"><a href="#🔸-第二步：ServerHello-Certificate" class="headerlink" title="🔸 第二步：ServerHello + Certificate"></a>🔸 第二步：ServerHello + Certificate</h3><p>服务器响应：</p>
+<ul>
+<li>选定 TLS 协议版本和加密算法</li>
+<li>服务器生成的随机数 <code>server_random</code></li>
+<li>服务器的 <strong>数字证书</strong>（包含域名、公钥、签名等）</li>
+<li>ServerHelloDone 表示“我说完了”</li>
+</ul>
+<p><strong>此时客户端已经获取到服务端的公钥</strong>。</p>
+<hr>
+<h3 id="🔸-第三步：密钥协商（PreMaster-Secret）"><a href="#🔸-第三步：密钥协商（PreMaster-Secret）" class="headerlink" title="🔸 第三步：密钥协商（PreMaster Secret）"></a>🔸 第三步：密钥协商（PreMaster Secret）</h3><p>客户端：</p>
+<ul>
+<li>生成一个随机的 <strong>PreMasterSecret</strong></li>
+<li>使用服务器的 <strong>公钥加密 PreMasterSecret</strong></li>
+<li>把密文发送给服务器（只有服务器才能解密）</li>
+</ul>
+<p>服务器：</p>
+<ul>
+<li>用自己的私钥解密得到 PreMasterSecret</li>
+</ul>
+<p>双方：</p>
+<ul>
+<li><p>利用：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">master_secret</span> = PRF(pre_master_secret, client_random + server_random)</span><br></pre></td></tr></table></figure>
+
+<p>生成对称密钥，之后通信使用对称加密（如 AES）</p>
+</li>
+</ul>
+<hr>
+<h3 id="🔸-第四步：完成握手"><a href="#🔸-第四步：完成握手" class="headerlink" title="🔸 第四步：完成握手"></a>🔸 第四步：完成握手</h3><ol>
+<li><p>客户端发送：</p>
+<ul>
+<li><code>ChangeCipherSpec</code>：我之后使用加密通信了</li>
+<li><code>Finished</code>：我计算的握手摘要（用对称加密加密）</li>
+</ul>
+</li>
+<li><p>服务器也发送：</p>
+<ul>
+<li><code>ChangeCipherSpec</code></li>
+<li><code>Finished</code></li>
+</ul>
+</li>
+</ol>
+<p>💡 若双方“Finished”校验一致，说明握手成功，接下来就是加密数据通信。</p>
+<hr>
+<h2 id="📦-握手完成后，数据通信开始"><a href="#📦-握手完成后，数据通信开始" class="headerlink" title="📦 握手完成后，数据通信开始"></a>📦 握手完成后，数据通信开始</h2><p>之后的数据都使用 <strong>对称加密算法（AES、ChaCha20）</strong>，用协商出的密钥加密，并加上 HMAC 校验防篡改。</p>
+<hr>
+<h2 id="⚡️-TLS-1-3-的变化（对比优化）"><a href="#⚡️-TLS-1-3-的变化（对比优化）" class="headerlink" title="⚡️ TLS 1.3 的变化（对比优化）"></a>⚡️ TLS 1.3 的变化（对比优化）</h2><p>TLS 1.3 取消了很多冗余流程，握手更快、更安全：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>TLS 1.2</th>
+<th>TLS 1.3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>握手轮次</td>
+<td>多轮</td>
+<td>最多 1 RTT（0-RTT 支持）</td>
+</tr>
+<tr>
+<td>加密算法</td>
+<td>可选 RSA&#x2F;DH</td>
+<td>只支持前向安全（ECDHE）</td>
+</tr>
+<tr>
+<td>加密开始时间</td>
+<td>握手后</td>
+<td>ServerHello 之后就加密</td>
+</tr>
+<tr>
+<td>证书传输</td>
+<td>明文</td>
+<td>加密</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🧪-补充：如何抓包观察-TLS-握手？"><a href="#🧪-补充：如何抓包观察-TLS-握手？" class="headerlink" title="🧪 补充：如何抓包观察 TLS 握手？"></a>🧪 补充：如何抓包观察 TLS 握手？</h2><p>用 Wireshark：</p>
+<ol>
+<li>打开浏览器访问 https 网站</li>
+<li>抓取 TCP 443 端口的数据包</li>
+<li>搜索关键词：<code>ClientHello</code>、<code>ServerHello</code>、<code>Certificate</code>、<code>Finished</code></li>
+</ol>
+<p>你可以清楚看到整个握手过程和交换的随机数、证书链等。</p>
+<hr>
+<h2 id="🧠-总结"><a href="#🧠-总结" class="headerlink" title="🧠 总结"></a>🧠 总结</h2><p>TLS 握手的核心是：</p>
+<ol>
+<li><strong>建立身份认证（服务器证书）</strong></li>
+<li><strong>协商出对称加密的密钥（通过非对称）</strong></li>
+<li><strong>后续通信都加密，并验证完整性</strong></li>
+</ol>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"># 网络</a>
+              <a href="/tags/%E5%8D%8F%E8%AE%AE/" rel="tag"># 协议</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/15/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/SSL-TLS%E5%8D%8F%E8%AE%AE%E8%AF%81%E4%B9%A6/" rel="prev" title="SSL/TLS协议">
+                  <i class="fa fa-angle-left"></i> SSL/TLS协议
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/15/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/%E8%AF%81%E4%B9%A6%E8%87%AA%E7%AD%BE%E4%B8%8ECA%E7%AD%BE%E5%8F%91/" rel="next" title="证书自签与CA签发">
+                  证书自签与CA签发 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

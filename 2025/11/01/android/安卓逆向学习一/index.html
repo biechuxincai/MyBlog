@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="more">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安卓逆向学习一">
+<meta property="og:url" content="http://example.com/2025/11/01/android/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0%E4%B8%80/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="more">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-01T01:42:53.000Z">
+<meta property="article:modified_time" content="2026-05-17T09:16:00.327Z">
+<meta property="article:author" content="Biechuxincai">
+<meta property="article:tag" content="android">
+<meta property="article:tag" content="逆向">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/11/01/android/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0%E4%B8%80/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/11/01/android/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0%E4%B8%80/","path":"2025/11/01/android/安卓逆向学习一/","title":"安卓逆向学习一"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>安卓逆向学习一 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-OTA-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">🧩 OTA 是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%A7-%E4%B8%BE%E4%B8%AA%E4%BE%8B%E5%AD%90%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">🔧 举个例子：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%93%A6-OTA-%E6%9B%B4%E6%96%B0%E5%8C%85%E5%90%AB%E4%BB%80%E4%B9%88%E5%86%85%E5%AE%B9"><span class="nav-number">1.2.</span> <span class="nav-text">📦 OTA 更新包含什么内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9A%99%EF%B8%8F-%E4%B8%8E-Root-Magisk-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.3.</span> <span class="nav-text">⚙️ 与 Root &#x2F; Magisk 的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%92%A1-%E6%80%BB%E7%BB%93%E4%B8%80%E5%8F%A5%E8%AF%9D%EF%BC%9A"><span class="nav-number">1.4.</span> <span class="nav-text">💡 总结一句话：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E4%B8%80%E3%80%81Magisk-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">🧩 一、Magisk 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E4%BA%8C%E3%80%81Magisk-%E7%9A%84%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">🧠 二、Magisk 的核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%B8%8F%E2%83%A3-%E2%80%9CSystemless%E2%80%9D-%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">3.1.</span> <span class="nav-text">1️⃣ “Systemless” 的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%B8%8F%E2%83%A3-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%EF%BC%88%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">2️⃣ 工作流程（启动过程）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%B8%8F%E2%83%A3-MagiskHide-DenyList%EF%BC%88%E9%9A%90%E8%97%8F-Root%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">3️⃣ MagiskHide &#x2F; DenyList（隐藏 Root）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9A%99%EF%B8%8F-%E4%B8%89%E3%80%81Magisk-%E7%AE%A1%E7%90%86%E5%99%A8%EF%BC%88Magisk-App%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">⚙️ 三、Magisk 管理器（Magisk App）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%B0-%E5%9B%9B%E3%80%81Magisk-%E6%A8%A1%E5%9D%97"><span class="nav-number">5.</span> <span class="nav-text">🧰 四、Magisk 模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E4%BA%94%E3%80%81Magisk-%E5%9C%A8%E9%80%86%E5%90%91%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">🧩 五、Magisk 在逆向中的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%90-%E5%85%AD%E3%80%81%E5%AE%89%E5%85%A8%E6%80%A7%E4%B8%8E%E9%A3%8E%E9%99%A9"><span class="nav-number">7.</span> <span class="nav-text">🔐 六、安全性与风险</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/11/01/android/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0%E4%B8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="安卓逆向学习一 | Just do it">
+      <meta itemprop="description" content="more">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          安卓逆向学习一
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-01 09:42:53" itemprop="dateCreated datePublished" datetime="2025-11-01T09:42:53+08:00">2025-11-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-05-17 17:16:00" itemprop="dateModified" datetime="2026-05-17T17:16:00+08:00">2026-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">more</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="🧩-OTA-是什么？"><a href="#🧩-OTA-是什么？" class="headerlink" title="🧩 OTA 是什么？"></a>🧩 OTA 是什么？</h2><p><strong>OTA</strong> 是 <strong>Over The Air</strong> 的缩写，意思是 <strong>“无线升级”</strong>。<br>在安卓系统里，它指的是：</p>
+<blockquote>
+<p>📱 <strong>手机厂商通过网络推送系统更新包（系统升级、补丁、安全更新）到设备上，用户无需连接电脑即可在线更新系统。</strong></p>
+</blockquote>
+<hr>
+<h3 id="🔧-举个例子："><a href="#🔧-举个例子：" class="headerlink" title="🔧 举个例子："></a>🔧 举个例子：</h3><p>当你看到手机提示：</p>
+<blockquote>
+<p>“系统更新可用，点击下载并安装。”</p>
+</blockquote>
+<p>其实这就是一次 <strong>OTA 更新</strong>。</p>
+<p>它会：</p>
+<ul>
+<li>下载一个差分补丁（通常是 <code>.zip</code> 文件）；</li>
+<li>校验签名；</li>
+<li>重启到 recovery 模式；</li>
+<li>将补丁应用到系统分区（<code>/system</code>、<code>/boot</code> 等）；</li>
+<li>然后重启进入新版本系统。</li>
+</ul>
+<hr>
+<h3 id="📦-OTA-更新包含什么内容"><a href="#📦-OTA-更新包含什么内容" class="headerlink" title="📦 OTA 更新包含什么内容"></a>📦 OTA 更新包含什么内容</h3><p>一个典型 OTA 包可能包含：</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>boot.img</code></td>
+<td>启动镜像（包含内核和 ramdisk）</td>
+</tr>
+<tr>
+<td><code>system.img</code></td>
+<td>系统分区</td>
+</tr>
+<tr>
+<td><code>vendor.img</code></td>
+<td>驱动及厂商配置</td>
+</tr>
+<tr>
+<td><code>recovery.img</code></td>
+<td>恢复模式</td>
+</tr>
+<tr>
+<td><code>payload.bin</code></td>
+<td>新版系统数据（A&#x2F;B 分区设备）</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="⚙️-与-Root-Magisk-的关系"><a href="#⚙️-与-Root-Magisk-的关系" class="headerlink" title="⚙️ 与 Root &#x2F; Magisk 的关系"></a>⚙️ 与 Root &#x2F; Magisk 的关系</h3><ul>
+<li>如果你 <strong>修改了系统分区（&#x2F;system）</strong> 或 <strong>boot 镜像被 Magisk 修改过</strong>，<br>那么 OTA 检查签名时会失败，更新安装不成功。</li>
+<li>Magisk 的 “systemless” 原理就是：<strong>不直接修改系统分区</strong>，这样理论上仍能进行 OTA 更新；<br>但实际更新后需要重新修补新的 <code>boot.img</code> 来恢复 Magisk。</li>
+</ul>
+<hr>
+<h3 id="💡-总结一句话："><a href="#💡-总结一句话：" class="headerlink" title="💡 总结一句话："></a>💡 总结一句话：</h3><blockquote>
+<p><strong>OTA 更新</strong> 就是通过网络下载系统补丁包、自动安装更新系统的过程。<br>Magisk 则是一种不破坏系统 OTA 功能的 Root 方案。</p>
+</blockquote>
+<hr>
+<h2 id="🧩-一、Magisk-是什么"><a href="#🧩-一、Magisk-是什么" class="headerlink" title="🧩 一、Magisk 是什么"></a>🧩 一、Magisk 是什么</h2><p><strong>Magisk</strong> 是一个 <strong>系统less（Systemless）Root 解决方案</strong>，由开发者 <strong>topjohnwu</strong> 开发。<br>它的主要作用是：</p>
+<blockquote>
+<p>✅ 在不修改系统分区（&#x2F;system）的情况下，为 Android 提供 Root 权限与模块化扩展功能。</p>
+</blockquote>
+<p>通俗点说：<br>👉 Magisk 是一种 <strong>“伪装式 Root”</strong>，它能让你获得系统最高权限，但不破坏系统分区本身，所以可以：</p>
+<ul>
+<li>保留系统 OTA 更新能力；</li>
+<li>绕过 SafetyNet（例如能让某些银行或支付 App 不检测到你 Root）；</li>
+<li>安装各种功能模块（如广告屏蔽、系统修改、Xposed 模块等）。</li>
+</ul>
+<hr>
+<h2 id="🧠-二、Magisk-的核心原理"><a href="#🧠-二、Magisk-的核心原理" class="headerlink" title="🧠 二、Magisk 的核心原理"></a>🧠 二、Magisk 的核心原理</h2><h3 id="1️⃣-“Systemless”-的含义"><a href="#1️⃣-“Systemless”-的含义" class="headerlink" title="1️⃣ “Systemless” 的含义"></a>1️⃣ “Systemless” 的含义</h3><p>传统的 Root（比如修改 <code>/system/bin/su</code>）会直接篡改系统文件，这样系统完整性被破坏，导致：</p>
+<ul>
+<li>无法 OTA 更新；</li>
+<li>Google SafetyNet 检测不通过；</li>
+<li>各种安全应用检测出 Root。</li>
+</ul>
+<p>Magisk 的做法不同：</p>
+<blockquote>
+<p>它在 <strong>启动阶段（boot 镜像）打补丁</strong>，通过修改内核启动流程挂载虚拟层，实现 Root。</p>
+</blockquote>
+<p>也就是说：</p>
+<ul>
+<li><code>/system</code> 看似被修改，其实是 Magisk 动态挂载的虚拟层；</li>
+<li>原系统镜像仍保持干净状态。</li>
+</ul>
+<hr>
+<h3 id="2️⃣-工作流程（启动过程）"><a href="#2️⃣-工作流程（启动过程）" class="headerlink" title="2️⃣ 工作流程（启动过程）"></a>2️⃣ 工作流程（启动过程）</h3><ol>
+<li><p>Android 启动时加载 boot 镜像；</p>
+</li>
+<li><p>被 Magisk 修补的 <code>boot.img</code> 内置一个启动脚本；</p>
+</li>
+<li><p>这个脚本会在早期挂载阶段加载 <strong>Magisk 环境（虚拟文件系统）</strong>；</p>
+</li>
+<li><p>在此环境中注入：</p>
+<ul>
+<li><code>su</code> 二进制；</li>
+<li>Magisk 守护进程；</li>
+<li>各种模块文件；</li>
+</ul>
+</li>
+<li><p>最终系统启动完成后，Root 权限可用。</p>
+</li>
+</ol>
+<hr>
+<h3 id="3️⃣-MagiskHide-DenyList（隐藏-Root）"><a href="#3️⃣-MagiskHide-DenyList（隐藏-Root）" class="headerlink" title="3️⃣ MagiskHide &#x2F; DenyList（隐藏 Root）"></a>3️⃣ MagiskHide &#x2F; DenyList（隐藏 Root）</h3><p>很多 App（银行、游戏）会检测 Root。<br>Magisk 提供 <strong>MagiskHide（旧版）</strong> 或 <strong>DenyList（新版）</strong> 功能：</p>
+<ul>
+<li>拦截应用读取 <code>/system</code>、<code>/proc</code>、<code>/su</code> 等可疑信息；</li>
+<li>屏蔽 Root 痕迹；</li>
+<li>实现“看似没 Root 但实际上已 Root”。</li>
+</ul>
+<hr>
+<h2 id="⚙️-三、Magisk-管理器（Magisk-App）"><a href="#⚙️-三、Magisk-管理器（Magisk-App）" class="headerlink" title="⚙️ 三、Magisk 管理器（Magisk App）"></a>⚙️ 三、Magisk 管理器（Magisk App）</h2><p>Magisk 提供一个 App（以前叫 <strong>Magisk Manager</strong>，现在直接叫 <strong>Magisk</strong>），主要功能有：</p>
+<ul>
+<li>安装 &#x2F; 卸载 Magisk；</li>
+<li>管理 Root 权限；</li>
+<li>启用 &#x2F; 禁用模块；</li>
+<li>通过终端或 ADB 管理系统。</li>
+</ul>
+<hr>
+<h2 id="🧰-四、Magisk-模块"><a href="#🧰-四、Magisk-模块" class="headerlink" title="🧰 四、Magisk 模块"></a>🧰 四、Magisk 模块</h2><p>Magisk 支持模块化扩展机制，类似插件系统。</p>
+<p>模块一般是压缩包（<code>.zip</code>），可实现：</p>
+<ul>
+<li>替换系统文件；</li>
+<li>挂载额外库；</li>
+<li>注入脚本；</li>
+<li>修改系统配置。</li>
+</ul>
+<p>常见模块：</p>
+<ul>
+<li>✅ <strong>Riru &#x2F; LSPosed</strong>：加载 Xposed 框架；</li>
+<li>✅ <strong>AdAway</strong>：广告屏蔽；</li>
+<li>✅ <strong>Viper4Android</strong>：音效增强；</li>
+<li>✅ <strong>BusyBox for Magisk</strong>：命令行增强工具。</li>
+</ul>
+<hr>
+<h2 id="🧩-五、Magisk-在逆向中的作用"><a href="#🧩-五、Magisk-在逆向中的作用" class="headerlink" title="🧩 五、Magisk 在逆向中的作用"></a>🧩 五、Magisk 在逆向中的作用</h2><p>在逆向分析、渗透测试中，Magisk 很有用：</p>
+<ul>
+<li>可以获得 <strong>系统级 Root 权限</strong>；</li>
+<li>动态注入或修改 App；</li>
+<li>配合 Frida、Xposed 做 Hook；</li>
+<li>拦截系统调用、绕过签名验证。</li>
+</ul>
+<p>举例：</p>
+<blockquote>
+<p>你可以通过 Magisk + LSPosed + JustTrustMe 模块，一键绕过 SSL Pinning。</p>
+</blockquote>
+<hr>
+<h2 id="🔐-六、安全性与风险"><a href="#🔐-六、安全性与风险" class="headerlink" title="🔐 六、安全性与风险"></a>🔐 六、安全性与风险</h2><p>虽然 Magisk 尽量 systemless，但仍存在风险：</p>
+<ul>
+<li>OTA 更新时可能失效；</li>
+<li>某些安全应用仍能检测；</li>
+<li>不当模块可能导致系统 Bootloop。</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>备份原始 boot.img；</li>
+<li>谨慎安装模块；</li>
+<li>用于学习与测试，不建议在主力机使用。</li>
+</ul>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android/" rel="tag"># android</a>
+              <a href="/tags/%E9%80%86%E5%90%91/" rel="tag"># 逆向</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/10/12/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/" rel="prev" title="数据库连接池">
+                  <i class="fa fa-angle-left"></i> 数据库连接池
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/11/01/%E9%80%86%E5%90%91/%E8%BF%90%E8%A1%8C%E6%97%B6%E5%8A%AB%E6%8C%81%E4%B8%8E%E6%8F%92%E6%A1%A9/" rel="next" title="运行时劫持与插桩">
+                  运行时劫持与插桩 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

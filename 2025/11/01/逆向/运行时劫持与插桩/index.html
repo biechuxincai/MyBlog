@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="more">
+<meta property="og:type" content="article">
+<meta property="og:title" content="运行时劫持与插桩">
+<meta property="og:url" content="http://example.com/2025/11/01/%E9%80%86%E5%90%91/%E8%BF%90%E8%A1%8C%E6%97%B6%E5%8A%AB%E6%8C%81%E4%B8%8E%E6%8F%92%E6%A1%A9/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="more">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-01T02:09:57.000Z">
+<meta property="article:modified_time" content="2026-05-17T09:16:00.334Z">
+<meta property="article:author" content="Biechuxincai">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/11/01/%E9%80%86%E5%90%91/%E8%BF%90%E8%A1%8C%E6%97%B6%E5%8A%AB%E6%8C%81%E4%B8%8E%E6%8F%92%E6%A1%A9/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/11/01/%E9%80%86%E5%90%91/%E8%BF%90%E8%A1%8C%E6%97%B6%E5%8A%AB%E6%8C%81%E4%B8%8E%E6%8F%92%E6%A1%A9/","path":"2025/11/01/逆向/运行时劫持与插桩/","title":"运行时劫持与插桩"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>运行时劫持与插桩 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E6%80%BB%E8%A7%88%EF%BC%88%E4%B8%80%E5%8F%A5%E8%AF%9D%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">概念总览（一句话）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E8%A1%8C%EF%BC%88%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">一、为什么可行（基本原理）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%B8%BB%E6%B5%81%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%8E%9F%E7%90%86%EF%BC%88%E6%8C%89%E5%B8%B8%E8%A7%81-%E5%AE%89%E5%85%A8%E5%AE%9E%E8%B7%B5%E5%88%86%E7%B1%BB%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">二、主流技术与原理（按常见&#x2F;安全实践分类）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%8A%A8%E6%80%81%E5%BA%93%E6%B3%A8%E5%85%A5-%E5%87%BD%E6%95%B0%E6%9B%BF%E6%8D%A2%EF%BC%88LD-PRELOAD%E3%80%81DYLD-INSERT-LIBRARIES%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">1) 动态库注入 + 函数替换（LD_PRELOAD、DYLD_INSERT_LIBRARIES）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-PLT-GOT-%E6%9B%BF%E6%8D%A2%EF%BC%88%E8%BF%9B%E7%A8%8B%E5%86%85%E8%A1%A8%E9%A1%B9%E4%BF%AE%E6%94%B9%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">2) PLT&#x2F;GOT 替换（进程内表项修改）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Inline-Hook-Trampoline%EF%BC%88%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">3) Inline Hook &#x2F; Trampoline（指令替换）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%A1%AC%E4%BB%B6%E6%96%AD%E7%82%B9-%E8%A7%82%E5%AF%9F%E7%82%B9%EF%BC%88CPU-%E8%B0%83%E8%AF%95%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">4) 硬件断点 &#x2F; 观察点（CPU 调试寄存器）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-ptrace-Debug-API%EF%BC%88%E8%BF%9B%E7%A8%8B%E9%99%84%E5%8A%A0%E6%8E%A7%E5%88%B6%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">5) ptrace &#x2F; Debug API（进程附加控制）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5-DLL-%E6%B3%A8%E5%85%A5-Remote-Thread%EF%BC%88%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E7%BA%BF%E7%A8%8B%EF%BC%89"><span class="nav-number">3.6.</span> <span class="nav-text">6) 代码注入 &#x2F; DLL 注入 &#x2F; Remote Thread（创建远程线程）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Java-ART-%E5%B1%82-Hook%EF%BC%88Xposed-Hook-%E6%A1%86%E6%9E%B6-Method-Swizzling%EF%BC%89"><span class="nav-number">3.7.</span> <span class="nav-text">7) Java&#x2F;ART 层 Hook（Xposed &#x2F; Hook 框架 &#x2F; Method Swizzling）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E5%8A%A8%E6%80%81%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%8F%92%E6%A1%A9-%E5%8A%A8%E6%80%81%E7%BF%BB%E8%AF%91%EF%BC%88Frida-DynamoRIO-PIN%EF%BC%89"><span class="nav-number">3.8.</span> <span class="nav-text">8) 动态二进制插桩 &#x2F; 动态翻译（Frida &#x2F; DynamoRIO &#x2F; PIN）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-Overlay%EF%BC%88systemless%EF%BC%89"><span class="nav-number">3.9.</span> <span class="nav-text">9) 虚拟文件系统 &#x2F; Overlay（systemless）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E4%BB%A3%E7%90%86-%E4%B8%AD%E9%97%B4%E4%BA%BA%EF%BC%88network-proxy-shim%EF%BC%89"><span class="nav-number">3.10.</span> <span class="nav-text">10) 代理&#x2F;中间人（network proxy &#x2F; shim）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E7%8E%B0%E6%97%B6%E5%BF%85%E9%A1%BB%E6%B3%A8%E6%84%8F%E7%9A%84%E7%B3%BB%E7%BB%9F%E9%98%B2%E6%8A%A4%E4%B8%8E%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">三、实现时必须注意的系统防护与问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%A4%BA%E4%BE%8B%EF%BC%88%E9%AB%98%E5%B1%82%E5%AE%89%E5%85%A8%E7%A4%BA%E6%84%8F%EF%BC%8C%E4%B8%8D%E6%98%AF%E7%BB%95%E8%BF%87%E4%BF%9D%E6%8A%A4%E8%84%9A%E6%9C%AC%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">四、示例（高层安全示意，不是绕过保护脚本）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LD-PRELOAD-%E6%A6%82%E5%BF%B5%E7%A4%BA%E4%BE%8B%EF%BC%88Linux%EF%BC%8C%E4%BC%AA%E4%BB%A3%E7%A0%81%EF%BC%89"><span class="nav-number">5.0.1.</span> <span class="nav-text">LD_PRELOAD 概念示例（Linux，伪代码）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Frida-Hook-Java%EF%BC%88%E9%AB%98%E5%B1%82%E7%A4%BA%E4%BE%8B%EF%BC%89"><span class="nav-number">5.0.2.</span> <span class="nav-text">Frida Hook Java（高层示例）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%A6%82%E4%BD%95%E5%AE%89%E5%85%A8-%E5%90%88%E8%A7%84%E5%9C%B0%E4%BD%BF%E7%94%A8%E8%BF%99%E4%BA%9B%E6%8A%80%E6%9C%AF"><span class="nav-number">6.</span> <span class="nav-text">五、如何安全&#x2F;合规地使用这些技术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%BB%BA%E8%AE%AE%EF%BC%88%E5%AE%9E%E8%B7%B5%E4%BD%86%E5%90%88%E8%A7%84%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">六、学习路线建议（实践但合规）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/11/01/%E9%80%86%E5%90%91/%E8%BF%90%E8%A1%8C%E6%97%B6%E5%8A%AB%E6%8C%81%E4%B8%8E%E6%8F%92%E6%A1%A9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="运行时劫持与插桩 | Just do it">
+      <meta itemprop="description" content="more">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          运行时劫持与插桩
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-01 10:09:57" itemprop="dateCreated datePublished" datetime="2025-11-01T10:09:57+08:00">2025-11-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-05-17 17:16:00" itemprop="dateModified" datetime="2026-05-17T17:16:00+08:00">2026-05-17</time>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">more</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="概念总览（一句话）"><a href="#概念总览（一句话）" class="headerlink" title="概念总览（一句话）"></a>概念总览（一句话）</h1><p><strong>运行时修改</strong>就是在程序运行时改变它的行为——通过替换函数入口、拦截调用、修改内存数据或插入中间层——而不去改磁盘上的二进制文件。常见手段：<strong>注入（inject）</strong>、<strong>拦截&#x2F;Hook</strong>、<strong>重定向（LD_PRELOAD&#x2F;PLT&#x2F;GOT）</strong>、<strong>内存打补丁（inline patch）</strong>、<strong>虚拟文件&#x2F;挂载覆盖（systemless）</strong> 与 <strong>代理层</strong>。</p>
+<ol>
+<li><p><strong>运行时修补 &#x2F; 运行时打补丁（Runtime Patching &#x2F; Hot-patching）</strong></p>
+<ul>
+<li>强调“在程序运行时修改行为而不改磁盘文件”。适合描述 inline hook、内存打补丁、trampoline 等。</li>
+</ul>
+</li>
+<li><p><strong>Hooking &#x2F; 劫持（Hooking &#x2F; Function Hooking）</strong></p>
+<ul>
+<li>强调“拦截函数调用并替换&#x2F;包裹它们”。覆盖 LD_PRELOAD、PLT&#x2F;GOT 改写、Java&#x2F;ART 方法替换、Frida 的 method hook 等。</li>
+</ul>
+</li>
+<li><p><strong>代码注入 &#x2F; 进程注入（Code Injection &#x2F; Process Injection）</strong></p>
+<ul>
+<li>强调“把自定义代码或库加载到目标进程”。例如 remote thread、动态加载 so、Frida agent、DLL 注入 等。</li>
+</ul>
+</li>
+<li><p><strong>二进制插桩 &#x2F; 动态插桩 &#x2F; 动态二进制翻译（Instrumentation &#x2F; Dynamic Binary Instrumentation）</strong></p>
+<ul>
+<li>强调“在运行时插入监测&#x2F;修改逻辑以观测或控制程序行为”。代表工具：Frida、DynamoRIO、PIN。</li>
+</ul>
+</li>
+<li><p><strong>调试与进程控制（Debugging &#x2F; ptrace-based Manipulation）</strong></p>
+<ul>
+<li>指通过 ptrace &#x2F; gdbserver 等调试 API 暂停、读写内存、设置断点等操作（这类既用于调试也能用于修改运行时状态）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h1 id="一、为什么可行（基本原理）"><a href="#一、为什么可行（基本原理）" class="headerlink" title="一、为什么可行（基本原理）"></a>一、为什么可行（基本原理）</h1><ol>
+<li>程序运行时是内存中的一堆可修改数据：代码段、数据段、堆、栈、内核结构。操作系统把这些映射到进程地址空间。</li>
+<li>调试&#x2F;注入&#x2F;ptrace 等机制允许一个外部实体读取&#x2F;写入另一个进程的内存、寄存器，或让目标进程执行指定代码。</li>
+<li>链接与调用不是“不可变”的：函数调用通过跳转表、PLT&#x2F;GOT、虚表（C++）、JNI 层、方法表（Java&#x2F;ART）等实现，这些表通常可以被替换或拦截。</li>
+<li>现代系统虽有保护（W^X、ASLR、DEP、签名、SELinux），但仍存在受控方式实现运行时修改（前提是有足够权限或利用已允许的调试接口）。</li>
+</ol>
+<h1 id="二、主流技术与原理（按常见-安全实践分类）"><a href="#二、主流技术与原理（按常见-安全实践分类）" class="headerlink" title="二、主流技术与原理（按常见&#x2F;安全实践分类）"></a>二、主流技术与原理（按常见&#x2F;安全实践分类）</h1><h2 id="1-动态库注入-函数替换（LD-PRELOAD、DYLD-INSERT-LIBRARIES）"><a href="#1-动态库注入-函数替换（LD-PRELOAD、DYLD-INSERT-LIBRARIES）" class="headerlink" title="1) 动态库注入 + 函数替换（LD_PRELOAD、DYLD_INSERT_LIBRARIES）"></a>1) 动态库注入 + 函数替换（LD_PRELOAD、DYLD_INSERT_LIBRARIES）</h2><p>原理：在程序启动时（或通过特定注入方式）把自制共享库放入动态链接器的搜索&#x2F;加载顺序前面，重写某些符号（函数），从而“劫持”原函数调用。</p>
+<ul>
+<li>适用：Linux、Android（glibc&#x2F;ld.so）、macOS（dyld）。</li>
+<li>优点：实现简单，源代码级替换友好，适合拦截 libc 接口（open&#x2F;read&#x2F;socket）。</li>
+<li>限制：只能在动态加载且遵循动态链接流程的函数上生效；对静态链接或早期初始化代码无效。需要在进程启动阶段生效（或通过注入让 ld 加载库）。</li>
+<li>简短示例（概念）：实现一个替代 <code>open</code> 的函数，打印路径再调用真实 <code>open</code>。</li>
+</ul>
+<h2 id="2-PLT-GOT-替换（进程内表项修改）"><a href="#2-PLT-GOT-替换（进程内表项修改）" class="headerlink" title="2) PLT&#x2F;GOT 替换（进程内表项修改）"></a>2) PLT&#x2F;GOT 替换（进程内表项修改）</h2><p>原理：ELF 可执行&#x2F;共享对象通过 PLT（过程链接表）与 GOT（全局偏移表）实现函数动态解析。修改 GOT 中指向函数的地址，就能把调用重定向到你的函数。</p>
+<ul>
+<li>优点：比 LD_PRELOAD 更“细粒度”，可在运行时对已加载模块生效。</li>
+<li>限制：需要可写性（GOT 可能被设为只读，需要改变页权限）；对内联或静态链接无效。</li>
+</ul>
+<h2 id="3-Inline-Hook-Trampoline（指令替换）"><a href="#3-Inline-Hook-Trampoline（指令替换）" class="headerlink" title="3) Inline Hook &#x2F; Trampoline（指令替换）"></a>3) Inline Hook &#x2F; Trampoline（指令替换）</h2><p>原理：在目标函数入口写入一条跳转指令（jmp&#x2F;bx&#x2F;…）到你的“hook”实现；你的实现完成后通常要跳回被替换指令后的地址（trampoline）。</p>
+<ul>
+<li><p>优点：可拦截任意可执行地址（包括 native 本地函数）。</p>
+</li>
+<li><p>技术点：</p>
+<ul>
+<li>需要把代码页设为可写（mprotect），然后写入跳转指令，再恢复执行权限。</li>
+<li>需要保存被覆盖的原始指令到 trampoline 中以便返回。</li>
+</ul>
+</li>
+<li><p>风险：如果写错会导致崩溃；在执行被覆盖位置的其他线程可能竞态；有防篡改&#x2F;代码校验的程序会检测到。</p>
+</li>
+</ul>
+<h2 id="4-硬件断点-观察点（CPU-调试寄存器）"><a href="#4-硬件断点-观察点（CPU-调试寄存器）" class="headerlink" title="4) 硬件断点 &#x2F; 观察点（CPU 调试寄存器）"></a>4) 硬件断点 &#x2F; 观察点（CPU 调试寄存器）</h2><p>原理：使用 CPU 的硬件断点（Debug Registers）来在某个地址或内存访问事件发生时触发异常，由调试器处理。</p>
+<ul>
+<li>优点：不修改目标内存代码；能监控内存读&#x2F;写&#x2F;执行。</li>
+<li>限制：数量有限（例如 x86 通常只有 4 个）；需要 ptrace &#x2F; gdbserver 等权限。</li>
+</ul>
+<h2 id="5-ptrace-Debug-API（进程附加控制）"><a href="#5-ptrace-Debug-API（进程附加控制）" class="headerlink" title="5) ptrace &#x2F; Debug API（进程附加控制）"></a>5) ptrace &#x2F; Debug API（进程附加控制）</h2><p>原理：Unix 的 ptrace 系统调用（或 Windows 的 Debug APIs）允许一个“父”进程附加到目标进程、暂停它、读写内存&#x2F;寄存器、接收信号并控制执行（单步&#x2F;继续）。</p>
+<ul>
+<li>用法：调试器（gdb&#x2F;gdbserver）通常就是通过 ptrace 实现断点、读写内存、单步等。</li>
+<li>能做的：把代码页修改为可写、打软断点（写入 trap 指令）、注入寄存器值让目标跑到你放的 shellcode 等。</li>
+<li>注意：ptrace 操作需要权限（通常 root 或相同 UID），并且可以被目标检测（TracerPid）。</li>
+</ul>
+<h2 id="6-代码注入-DLL-注入-Remote-Thread（创建远程线程）"><a href="#6-代码注入-DLL-注入-Remote-Thread（创建远程线程）" class="headerlink" title="6) 代码注入 &#x2F; DLL 注入 &#x2F; Remote Thread（创建远程线程）"></a>6) 代码注入 &#x2F; DLL 注入 &#x2F; Remote Thread（创建远程线程）</h2><p>原理（Windows 举例）：在目标进程内分配内存、写入库路径或 shellcode，然后通过 CreateRemoteThread 调用 LoadLibrary 或执行 shellcode，使目标进程加载你的代码。Linux 下等价是通过 ptrace 或 <code>injectso</code> 类工具。</p>
+<ul>
+<li>优点：能把任意逻辑注入目标进程。</li>
+<li>风险与限制：权限要求高；容易被安全软件检测。</li>
+</ul>
+<h2 id="7-Java-ART-层-Hook（Xposed-Hook-框架-Method-Swizzling）"><a href="#7-Java-ART-层-Hook（Xposed-Hook-框架-Method-Swizzling）" class="headerlink" title="7) Java&#x2F;ART 层 Hook（Xposed &#x2F; Hook 框架 &#x2F; Method Swizzling）"></a>7) Java&#x2F;ART 层 Hook（Xposed &#x2F; Hook 框架 &#x2F; Method Swizzling）</h2><p>原理（托管语言）：拦截虚拟机层的调用表或替换方法表项（method pointers），或在类加载&#x2F;方法解析阶段插入代理。</p>
+<ul>
+<li>Android：Xposed、LSPosed、Frida 的 Java.perform() 能在 ART 层 hook Java 方法。</li>
+<li>优点：source-like 的 hook，易读易写，适合高层逻辑修改。</li>
+<li>限制：需要平台支持（例如 root&#x2F;Xposed），或使用 Frida 注入运行时脚本。</li>
+</ul>
+<h2 id="8-动态二进制插桩-动态翻译（Frida-DynamoRIO-PIN）"><a href="#8-动态二进制插桩-动态翻译（Frida-DynamoRIO-PIN）" class="headerlink" title="8) 动态二进制插桩 &#x2F; 动态翻译（Frida &#x2F; DynamoRIO &#x2F; PIN）"></a>8) 动态二进制插桩 &#x2F; 动态翻译（Frida &#x2F; DynamoRIO &#x2F; PIN）</h2><p>原理：在进程内部插入一个运行时代理（或替代执行引擎），在指令执行时逐条或按块地插入钩子逻辑（instrumentation），可以在任意点拦截行为。</p>
+<ul>
+<li>工具：Frida（脚本化 API，方便）、DynamoRIO、Intel PIN。</li>
+<li>优点：非常灵活，可做函数级、指令级或内存访问级别的动态分析&#x2F;修改。</li>
+<li>缺点：性能开销，且通常需注入 agent。</li>
+</ul>
+<h2 id="9-虚拟文件系统-Overlay（systemless）"><a href="#9-虚拟文件系统-Overlay（systemless）" class="headerlink" title="9) 虚拟文件系统 &#x2F; Overlay（systemless）"></a>9) 虚拟文件系统 &#x2F; Overlay（systemless）</h2><p>原理：通过挂载层（overlay、bind mount、magisk 的虚拟挂载等）来“替换”文件而不改原始镜像。对程序来说，某些文件看起来被修改了，但磁盘上的真实文件未变。</p>
+<ul>
+<li>典型用途：Magisk 的 systemless 模块就是这种思路，避免修改 &#x2F;system 分区直接影响 OTA 签名判断。</li>
+</ul>
+<h2 id="10-代理-中间人（network-proxy-shim）"><a href="#10-代理-中间人（network-proxy-shim）" class="headerlink" title="10) 代理&#x2F;中间人（network proxy &#x2F; shim）"></a>10) 代理&#x2F;中间人（network proxy &#x2F; shim）</h2><p>原理：不在程序内部改动，而在进出程序的边界（网络、IPC、库）放代理或替身：例如用代理替换远端服务、或用包装库替换系统库。</p>
+<ul>
+<li>优点：不涉及内存补丁，风险较低。</li>
+<li>示例：用 mitmproxy 做 HTTPS 拦截，或用 LD_PRELOAD 写一个替身库代理某个系统调用。</li>
+</ul>
+<h1 id="三、实现时必须注意的系统防护与问题"><a href="#三、实现时必须注意的系统防护与问题" class="headerlink" title="三、实现时必须注意的系统防护与问题"></a>三、实现时必须注意的系统防护与问题</h1><ul>
+<li><strong>W^X &#x2F; DEP &#x2F; NX</strong>：代码页默认不可写，这要求在写入代码之前调用 <code>mprotect</code> 改变权限。</li>
+<li><strong>ASLR</strong>：地址随机化导致地址不可预测，需要解析 &#x2F;proc&#x2F;<pid>&#x2F;maps 或利用符号解析来定位函数地址。</li>
+<li><strong>签名校验 &#x2F; 完整性检查</strong>：某些程序会校验自身代码或校验加载的库，运行时篡改可能被检测到。</li>
+<li><strong>SELinux &#x2F; 沙盒 &#x2F; 权限模型</strong>：在 Android 上，普通应用很难跨应用 attach 或访问 &#x2F;data，通常需要 root 或调试签名权限。</li>
+<li><strong>多线程竞态</strong>：在替换代码时，其他线程可能正在执行被修改函数，需小心同步（常用的方法是先暂停线程或用原子替换并使用 trampolines）。</li>
+<li><strong>保护机制&#x2F;反调试</strong>：Target 可能检测 TracerPid、时间延迟、代码页被修改等并采取反制。</li>
+</ul>
+<h1 id="四、示例（高层安全示意，不是绕过保护脚本）"><a href="#四、示例（高层安全示意，不是绕过保护脚本）" class="headerlink" title="四、示例（高层安全示意，不是绕过保护脚本）"></a>四、示例（高层安全示意，不是绕过保护脚本）</h1><h3 id="LD-PRELOAD-概念示例（Linux，伪代码）"><a href="#LD-PRELOAD-概念示例（Linux，伪代码）" class="headerlink" title="LD_PRELOAD 概念示例（Linux，伪代码）"></a>LD_PRELOAD 概念示例（Linux，伪代码）</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mypreload.c</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"><span class="keyword">typedef</span> <span class="title function_">int</span> <span class="params">(*<span class="type">open_t</span>)</span><span class="params">(<span class="type">const</span> <span class="type">char</span>*, <span class="type">int</span>, ...)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">open</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *path, <span class="type">int</span> flags, ...)</span> &#123;</span><br><span class="line">    <span class="type">static</span> <span class="type">open_t</span> real_open = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">if</span> (!real_open) real_open = (<span class="type">open_t</span>)dlsym(RTLD_NEXT, <span class="string">&quot;open&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;open called: %s\n&quot;</span>, path);</span><br><span class="line">    <span class="keyword">return</span> real_open(path, flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>把编译成 <code>libmypreload.so</code>，在启动目标时 <code>LD_PRELOAD=./libmypreload.so ./target</code>。（说明：若目标受保护或是 suid 程序，LD_PRELOAD 被忽略）</p>
+<h3 id="Frida-Hook-Java（高层示例）"><a href="#Frida-Hook-Java（高层示例）" class="headerlink" title="Frida Hook Java（高层示例）"></a>Frida Hook Java（高层示例）</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// frida script</span></span><br><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> <span class="title class_">MyClass</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.example.MyClass&#x27;</span>);</span><br><span class="line">  <span class="title class_">MyClass</span>.<span class="property">myMethod</span>.<span class="property">implementation</span> = <span class="keyword">function</span>(<span class="params">arg</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;myMethod called, arg:&#x27;</span>, arg);</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">myMethod</span>(arg); <span class="comment">// 可选择修改参数/返回值</span></span><br><span class="line">  &#125;;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>Frida 需要注入 agent 到进程，适合做动态分析与研究。</p>
+<h1 id="五、如何安全-合规地使用这些技术"><a href="#五、如何安全-合规地使用这些技术" class="headerlink" title="五、如何安全&#x2F;合规地使用这些技术"></a>五、如何安全&#x2F;合规地使用这些技术</h1><ul>
+<li>只在<strong>你有权限</strong>或<strong>受控实验环境</strong>中使用（你的设备、开源&#x2F;练习的应用、或得到书面授权的目标）。</li>
+<li>不要用来绕过支付&#x2F;版权&#x2F;安全保护或未经授权地访问他人数据。</li>
+<li>在公司&#x2F;组织做测试时，走授权流程并写测试计划，保留日志与回滚方案。</li>
+</ul>
+<h1 id="六、学习路线建议（实践但合规）"><a href="#六、学习路线建议（实践但合规）" class="headerlink" title="六、学习路线建议（实践但合规）"></a>六、学习路线建议（实践但合规）</h1><ol>
+<li>从 LD_PRELOAD &#x2F; wrapper 库 与 Frida 的简单 hook 开始（在你自己的示例程序上练习）。</li>
+<li>学习 ELF&#x2F;PE 的符号解析与 PLT&#x2F;GOT 机制，再做 GOT 重写实验。</li>
+<li>学习 ptrace&#x2F;gdbserver 的工作流（以调试为主，不做滥用）。</li>
+<li>理解 inline hook &#x2F; trampoline 的实现原理并在本地构造小 demo（非生产&#x2F;受保护程序）。</li>
+<li>了解现代防护（ASLR、DEP、签名、SELinux）如何限制这些技术。</li>
+</ol>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/11/01/android/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0%E4%B8%80/" rel="prev" title="安卓逆向学习一">
+                  <i class="fa fa-angle-left"></i> 安卓逆向学习一
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/11/01/android/APK%E4%BB%8B%E7%BB%8D/" rel="next" title="APK介绍">
+                  APK介绍 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

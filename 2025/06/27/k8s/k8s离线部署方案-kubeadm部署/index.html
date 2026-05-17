@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="more">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s离线部署方案-kubeadm部署">
+<meta property="og:url" content="http://example.com/2025/06/27/k8s/k8s%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88-kubeadm%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="more">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-27T08:22:30.000Z">
+<meta property="article:modified_time" content="2026-05-17T09:16:00.330Z">
+<meta property="article:author" content="Biechuxincai">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/06/27/k8s/k8s%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88-kubeadm%E9%83%A8%E7%BD%B2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/06/27/k8s/k8s%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88-kubeadm%E9%83%A8%E7%BD%B2/","path":"2025/06/27/k8s/k8s离线部署方案-kubeadm部署/","title":"k8s离线部署方案-kubeadm部署"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>k8s离线部署方案-kubeadm部署 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kubernetes-1-29-%E9%9B%B6%E7%BA%BF%E7%BD%91%E7%8E%AF%E5%A2%83-kubeadm-Docker-%E9%83%A8%E7%BD%B2%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.</span> <span class="nav-text">Kubernetes 1.29 零线网环境 kubeadm + Docker 部署步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E4%B8%80%EF%BC%9A%E8%81%94%E7%BD%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84%E5%87%86%E5%A4%87%E6%93%8D%E4%BD%9C"><span class="nav-number">1.1.</span> <span class="nav-text">部分一：联网环境下的准备操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.1.1.</span> <span class="nav-text">一、环境设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%B8%BB%E6%9C%BA%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">1. 主机配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%89%88%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">2. 版本信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%93%8D%E4%BD%9C"><span class="nav-number">1.1.2.</span> <span class="nav-text">二、网络环境下操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BD%BF%E7%94%A8-yum-%E4%B8%8B%E8%BD%BD-kubeadm%E3%80%81kubelet%E3%80%81kubectl-%E5%88%B0%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1. 使用 yum 下载 kubeadm、kubelet、kubectl 到指定位置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%B8%8B%E8%BD%BD-Docker-%E5%92%8C-cri-dockerd-RPM"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">2. 下载 Docker 和 cri-dockerd RPM</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%8F%82%E7%85%A7%E4%B8%8B%E9%9D%A2%E7%9A%84%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4%E5%85%88%E5%AE%89%E8%A3%85docker%E5%92%8Ckubeadm"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">3. 参照下面的安装步骤先安装docker和kubeadm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E4%B8%8B%E8%BD%BD-Kubernetes-%E6%89%80%E9%9C%80%E9%95%9C%E5%83%8F"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">4. 下载 Kubernetes 所需镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E5%B9%B6%E6%8E%A8%E9%80%81%E5%88%B0%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">5. 下载镜像并推送到私有仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E4%B8%8B%E8%BD%BD-Flannel-%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">6. 下载 Flannel 网络插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-%E6%89%93%E5%8C%85%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85%E5%8C%85"><span class="nav-number">1.1.2.7.</span> <span class="nav-text">7. 打包离线安装包</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E4%BA%8C%EF%BC%9A%E7%A6%BB%E7%BA%BF%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84%E9%83%A8%E7%BD%B2%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.2.</span> <span class="nav-text">部分二：离线环境下的部署步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.1.</span> <span class="nav-text">一、基础环境配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%85%B3%E9%97%AD-swap-selinux-firewalld"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">1. 关闭 swap&#x2F;selinux&#x2F;firewalld</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%B7%BB%E5%8A%A0%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">2. 添加内核参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E8%AE%BE%E7%BD%AE%E4%B8%BB%E6%9C%BA%E5%90%8D"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">3. 设置主机名</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85-Docker-%E5%92%8C-cri-dockerd"><span class="nav-number">1.2.2.</span> <span class="nav-text">二、安装 Docker 和 cri-dockerd</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA-docker-%E7%94%A8%E6%88%B7%E7%BB%84%EF%BC%88%E5%A6%82%E6%9E%9C%E8%BF%98%E6%B2%A1%E6%9C%89%EF%BC%89"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">1. 创建 docker 用户组（如果还没有）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%B0%86%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8A%A0%E5%85%A5-docker-%E7%BB%84"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">2. 将当前用户加入 docker 组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%87%8D%E6%96%B0%E7%99%BB%E5%BD%95%E6%88%96%E5%88%B7%E6%96%B0%E7%BB%84%E6%88%90%E5%91%98%E8%BA%AB%E4%BB%BD"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">3. 重新登录或刷新组成员身份</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E9%AA%8C%E8%AF%81%E6%98%AF%E5%90%A6%E7%94%9F%E6%95%88"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">4. 验证是否生效</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9D%97-%E8%A1%A5%E5%85%85%E8%AF%B4%E6%98%8E"><span class="nav-number">1.2.3.</span> <span class="nav-text">❗ 补充说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%89-Docker-Registry"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">创建私有 Docker Registry</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%89%E8%A3%85-kubeadm-kubelet-kubectl"><span class="nav-number">1.2.4.</span> <span class="nav-text">三、安装 kubeadm&#x2F;kubelet&#x2F;kubectl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AF%BC%E5%85%A5%E9%95%9C%E5%83%8F"><span class="nav-number">1.2.5.</span> <span class="nav-text">四、导入镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%88%9D%E5%A7%8B%E5%8C%96-Master"><span class="nav-number">1.2.6.</span> <span class="nav-text">五、初始化 Master</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE-kubeadm-%E6%A8%A1%E6%9D%BF"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">1. 配置 kubeadm 模板</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">2. 初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AE-kubectl-%E7%94%A8%E6%88%B7"><span class="nav-number">1.2.6.3.</span> <span class="nav-text">3. 配置 kubectl 用户</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E9%83%A8%E7%BD%B2-Flannel-%E7%BD%91%E7%BB%9C"><span class="nav-number">1.2.7.</span> <span class="nav-text">六、部署 Flannel 网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E3%80%81Node-%E8%8A%82%E7%82%B9%E5%8A%A0%E5%85%A5"><span class="nav-number">1.2.8.</span> <span class="nav-text">七、Node 节点加入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E6%A0%A1%E9%AA%8C%E7%8A%B6%E6%80%81"><span class="nav-number">1.2.9.</span> <span class="nav-text">八、校验状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/27/k8s/k8s%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88-kubeadm%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="k8s离线部署方案-kubeadm部署 | Just do it">
+      <meta itemprop="description" content="more">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          k8s离线部署方案-kubeadm部署
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-27 16:22:30" itemprop="dateCreated datePublished" datetime="2025-06-27T16:22:30+08:00">2025-06-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-05-17 17:16:00" itemprop="dateModified" datetime="2026-05-17T17:16:00+08:00">2026-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">more</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Kubernetes-1-29-零线网环境-kubeadm-Docker-部署步骤"><a href="#Kubernetes-1-29-零线网环境-kubeadm-Docker-部署步骤" class="headerlink" title="Kubernetes 1.29 零线网环境 kubeadm + Docker 部署步骤"></a>Kubernetes 1.29 零线网环境 kubeadm + Docker 部署步骤</h1><h2 id="部分一：联网环境下的准备操作"><a href="#部分一：联网环境下的准备操作" class="headerlink" title="部分一：联网环境下的准备操作"></a>部分一：联网环境下的准备操作</h2><h3 id="一、环境设置"><a href="#一、环境设置" class="headerlink" title="一、环境设置"></a>一、环境设置</h3><h4 id="1-主机配置"><a href="#1-主机配置" class="headerlink" title="1. 主机配置"></a>1. 主机配置</h4><p>例：</p>
+<ul>
+<li>Master IP: <code>192.168.0.10</code></li>
+<li>Node1 IP: <code>192.168.0.11</code></li>
+<li>私有 Docker Registry: <code>192.168.0.100:5000</code></li>
+</ul>
+<h4 id="2-版本信息"><a href="#2-版本信息" class="headerlink" title="2. 版本信息"></a>2. 版本信息</h4><ul>
+<li>Kubernetes: v1.29.0</li>
+<li>Docker 作为 container runtime（需配合额外组件 cri-dockerd）</li>
+</ul>
+<h3 id="二、网络环境下操作"><a href="#二、网络环境下操作" class="headerlink" title="二、网络环境下操作"></a>二、网络环境下操作</h3><h4 id="1-使用-yum-下载-kubeadm、kubelet、kubectl-到指定位置"><a href="#1-使用-yum-下载-kubeadm、kubelet、kubectl-到指定位置" class="headerlink" title="1. 使用 yum 下载 kubeadm、kubelet、kubectl 到指定位置"></a>1. 使用 yum 下载 kubeadm、kubelet、kubectl 到指定位置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置 Kubernetes 仓库配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /data/k8s-rpms</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> /etc/yum.repos.d /data/k8s-rpms/ -r</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/yum.repos.d/kubernetes.repo</span></span><br><span class="line"><span class="string">[kubernetes]</span></span><br><span class="line"><span class="string">name=Kubernetes</span></span><br><span class="line"><span class="string">baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/</span></span><br><span class="line"><span class="string">enabled=1</span></span><br><span class="line"><span class="string">gpgcheck=1</span></span><br><span class="line"><span class="string">gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key</span></span><br><span class="line"><span class="string">exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载 RPM 包（不安装）</span></span><br><span class="line"><span class="built_in">sudo</span> yum install --downloadonly --downloaddir=/data/k8s-rpms kubelet kubeadm kubectl --disableexcludes=kubernetes</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-下载-Docker-和-cri-dockerd-RPM"><a href="#2-下载-Docker-和-cri-dockerd-RPM" class="headerlink" title="2. 下载 Docker 和 cri-dockerd RPM"></a>2. 下载 Docker 和 cri-dockerd RPM</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 yum-utils 工具</span></span><br><span class="line">yum install -y yum-utils --downloadonly --downloaddir=./docker_rpms</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置 docker-ce 源（默认只配置，不安装）</span></span><br><span class="line">yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载 docker-ce 和相关依赖</span></span><br><span class="line">yumdownloader --resolve --destdir=./docker_rpms docker-ce docker-ce-cli containerd.io</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载 cri-dockerd</span></span><br><span class="line">wget https://github.com/containernetworking/plugins/releases/download/v1.4.0/cni-plugins-linux-amd64-v1.4.0.tgz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 之后你会得到一堆 .rpm 包，全部打包</span></span><br><span class="line">tar -czvf docker_rpms.tar.gz ./docker_rpms</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-参照下面的安装步骤先安装docker和kubeadm"><a href="#3-参照下面的安装步骤先安装docker和kubeadm" class="headerlink" title="3. 参照下面的安装步骤先安装docker和kubeadm"></a>3. 参照下面的安装步骤先安装docker和kubeadm</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull registry:2</span><br><span class="line">docker save -o registry.tar registry:2</span><br></pre></td></tr></table></figure>
+<h4 id="4-下载-Kubernetes-所需镜像"><a href="#4-下载-Kubernetes-所需镜像" class="headerlink" title="4. 下载 Kubernetes 所需镜像"></a>4. 下载 Kubernetes 所需镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm config images list --kubernetes-version=v1.29.0</span><br></pre></td></tr></table></figure>
+
+<p>镜像清单：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">registry.k8s.io/kube-apiserver:v1.29.0</span><br><span class="line">registry.k8s.io/kube-controller-manager:v1.29.0</span><br><span class="line">registry.k8s.io/kube-scheduler:v1.29.0</span><br><span class="line">registry.k8s.io/kube-proxy:v1.29.0</span><br><span class="line">registry.k8s.io/pause:3.9</span><br><span class="line">registry.k8s.io/etcd:3.5.9-0</span><br><span class="line">registry.k8s.io/coredns/coredns:v1.11.1</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-下载镜像并推送到私有仓库"><a href="#5-下载镜像并推送到私有仓库" class="headerlink" title="5. 下载镜像并推送到私有仓库"></a>5. 下载镜像并推送到私有仓库</h4><p>生成脚本 <code>images-download-push.sh</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">REGISTRY=192.168.0.100:5000</span><br><span class="line">K8S_VERSION=v1.29.0</span><br><span class="line">IMAGES=(</span><br><span class="line">  kube-apiserver:<span class="variable">$K8S_VERSION</span></span><br><span class="line">  kube-controller-manager:<span class="variable">$K8S_VERSION</span></span><br><span class="line">  kube-scheduler:<span class="variable">$K8S_VERSION</span></span><br><span class="line">  kube-proxy:<span class="variable">$K8S_VERSION</span></span><br><span class="line">  pause:3.9</span><br><span class="line">  etcd:3.5.9-0</span><br><span class="line">  coredns/coredns:v1.11.1</span><br><span class="line">)</span><br><span class="line"><span class="built_in">mkdir</span> -p ./images</span><br><span class="line"><span class="keyword">for</span> image <span class="keyword">in</span> <span class="variable">$&#123;IMAGES[@]&#125;</span>; <span class="keyword">do</span></span><br><span class="line">  docker pull registry.k8s.io/<span class="variable">$image</span></span><br><span class="line">  local_image=<span class="variable">$REGISTRY</span>/$(<span class="built_in">basename</span> <span class="variable">$image</span>)</span><br><span class="line">  docker tag registry.k8s.io/<span class="variable">$image</span> <span class="variable">$local_image</span></span><br><span class="line">  <span class="comment"># docker push $local_image #暂时不需要</span></span><br><span class="line">  docker save -o ./images/$(<span class="built_in">basename</span> <span class="variable">$image</span>).tar <span class="variable">$local_image</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ../images</span><br><span class="line"></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 确保脚本以 bash 执行，以支持变量替换</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 遍历 kubeadm config images list 列出的每个镜像</span></span><br><span class="line"><span class="keyword">for</span> img <span class="keyword">in</span> $(kubeadm config images list); <span class="keyword">do</span></span><br><span class="line">    <span class="comment"># 提取镜像名称，用于文件名</span></span><br><span class="line">    <span class="comment"># 例如：registry.k8s.io/kube-apiserver:v1.29.0 -&gt; kube-apiserver_v1.29.0</span></span><br><span class="line">    <span class="comment"># 注意：这里我们直接使用完整的 img 名称作为 tar 文件名的一部分，更准确</span></span><br><span class="line">    <span class="comment"># 或者如果你想更简洁，可以进一步处理字符串</span></span><br><span class="line">    filename=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$img</span>&quot;</span> | sed <span class="string">&#x27;s/\//_/g&#x27;</span> | sed <span class="string">&#x27;s/:/_/g&#x27;</span>) <span class="comment"># 将斜杠和冒号替换为下划线，适合文件名</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 首先尝试拉取镜像（如果本地没有，或者版本不对）</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;拉取镜像: <span class="variable">$img</span>&quot;</span></span><br><span class="line">    docker pull <span class="string">&quot;<span class="variable">$img</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 保存镜像到本地文件</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;保存镜像到: ./<span class="variable">$filename</span>.tar&quot;</span></span><br><span class="line">    docker save -o <span class="string">&quot;./<span class="variable">$filename</span>.tar&quot;</span> <span class="string">&quot;<span class="variable">$img</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 如果你需要将这些镜像推送到私有仓库，再添加这部分逻辑</span></span><br><span class="line">    <span class="comment"># 例如：</span></span><br><span class="line">    <span class="comment"># private_repo=&quot;192.168.0.10:5000&quot;</span></span><br><span class="line">    <span class="comment"># new_img_name=&quot;$private_repo/$(basename &quot;$img&quot;)&quot; # 提取原始镜像名，例如 kube-apiserver:v1.29.0</span></span><br><span class="line">    <span class="comment"># docker tag &quot;$img&quot; &quot;$new_img_name&quot;</span></span><br><span class="line">    <span class="comment"># echo &quot;推送镜像到私有仓库: $new_img_name&quot;</span></span><br><span class="line">    <span class="comment"># docker push &quot;$new_img_name&quot;</span></span><br><span class="line">    <span class="comment"># docker rmi &quot;$new_img_name&quot; # 可选：推送后删除本地标签</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;所有镜像处理完成。&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="6-下载-Flannel-网络插件"><a href="#6-下载-Flannel-网络插件" class="headerlink" title="6. 下载 Flannel 网络插件"></a>6. 下载 Flannel 网络插件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ../manifests</span><br><span class="line">wget https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml</span><br><span class="line">sed -i <span class="string">&#x27;s|quay.io/coreos/flannel|192.168.0.10:5000/flannel|g&#x27;</span></span><br><span class="line"></span><br><span class="line">docker pull flannel/flannel:v0.24.2</span><br><span class="line">docker tag flannel/flannel:v0.24.2 192.168.10.11:5000/flannel:v0.24.2</span><br><span class="line">docker save -o flannel.tar 192.168.10.11:5000/flannel:v0.24.2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="7-打包离线安装包"><a href="#7-打包离线安装包" class="headerlink" title="7. 打包离线安装包"></a>7. 打包离线安装包</h4><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">k8s-offline-package/</span><br><span class="line">├── rpms/</span><br><span class="line">│   ├── kubeadm-*<span class="selector-class">.rpm</span></span><br><span class="line">│   ├── kubelet-*<span class="selector-class">.rpm</span></span><br><span class="line">│   ├── kubectl-*<span class="selector-class">.rpm</span></span><br><span class="line">│   ├── docker*<span class="selector-class">.rpm</span></span><br><span class="line">│   └── cri-dockerd*<span class="selector-class">.rpm</span></span><br><span class="line">├── images/</span><br><span class="line">│   ├── kube-apiserver<span class="selector-class">.tar</span></span><br><span class="line">│   ├── ...</span><br><span class="line">├── kubeadm-config<span class="selector-class">.yaml</span></span><br><span class="line">├── kube-flannel<span class="selector-class">.yml</span></span><br><span class="line">├── install-guide.txt</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="部分二：离线环境下的部署步骤"><a href="#部分二：离线环境下的部署步骤" class="headerlink" title="部分二：离线环境下的部署步骤"></a>部分二：离线环境下的部署步骤</h2><h3 id="一、基础环境配置"><a href="#一、基础环境配置" class="headerlink" title="一、基础环境配置"></a>一、基础环境配置</h3><h4 id="1-关闭-swap-selinux-firewalld"><a href="#1-关闭-swap-selinux-firewalld" class="headerlink" title="1. 关闭 swap&#x2F;selinux&#x2F;firewalld"></a>1. 关闭 swap&#x2F;selinux&#x2F;firewalld</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> swapoff -a &amp;&amp; <span class="built_in">sudo</span> sed -i <span class="string">&#x27;/swap/d&#x27;</span> /etc/fstab</span><br><span class="line"><span class="built_in">sudo</span> setenforce 0 &amp;&amp; <span class="built_in">sudo</span> sed -i <span class="string">&#x27;s/^SELINUX=.*/SELINUX=disabled/&#x27;</span> /etc/selinux/config</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">disable</span> firewalld --now</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-添加内核参数"><a href="#2-添加内核参数" class="headerlink" title="2. 添加内核参数"></a>2. 添加内核参数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将桥接的ipv4流量传递到iptables的链</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/k8s.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">sudo</span> modprobe br_netfilter</span><br><span class="line"><span class="built_in">sudo</span> sysctl --system</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-设置主机名"><a href="#3-设置主机名" class="headerlink" title="3. 设置主机名"></a>3. 设置主机名</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/hosts &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">192.168.0.10 k8s-master</span></span><br><span class="line"><span class="string">192.168.0.11 k8s-node1</span></span><br><span class="line"><span class="string">192.168.0.12 k8s-node2</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 分别在每台上：</span></span><br><span class="line">hostnamectl set-hostname k8s-master  <span class="comment"># 或 k8s-node1、k8s-node2</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="二、安装-Docker-和-cri-dockerd"><a href="#二、安装-Docker-和-cri-dockerd" class="headerlink" title="二、安装 Docker 和 cri-dockerd"></a>二、安装 Docker 和 cri-dockerd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> rpms &amp;&amp; <span class="built_in">sudo</span> rpm -ivh docker*.rpm</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> docker --now</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置 /etc/docker/daemon.json 信任私有仓库</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/docker/daemon.json</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;insecure-registries&quot;: [&quot;192.168.0.100:5000&quot;]</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart docker</span><br></pre></td></tr></table></figure>
+<p>记得创建docker用户组</p>
+<h4 id="1-创建-docker-用户组（如果还没有）"><a href="#1-创建-docker-用户组（如果还没有）" class="headerlink" title="1. 创建 docker 用户组（如果还没有）"></a>1. <strong>创建 <code>docker</code> 用户组（如果还没有）</strong></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> groupadd docker</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果提示 “group already exists”，说明该组已经存在，可以跳过这一步。</p>
+</blockquote>
+<hr>
+<h4 id="2-将当前用户加入-docker-组"><a href="#2-将当前用户加入-docker-组" class="headerlink" title="2. 将当前用户加入 docker 组"></a>2. <strong>将当前用户加入 <code>docker</code> 组</strong></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> usermod -aG docker <span class="variable">$USER</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>$USER</code> 是当前用户名的环境变量。你也可以直接替换为具体用户名，如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> usermod -aG docker kaixinbu</span><br></pre></td></tr></table></figure>
+</blockquote>
+<hr>
+<h4 id="3-重新登录或刷新组成员身份"><a href="#3-重新登录或刷新组成员身份" class="headerlink" title="3. 重新登录或刷新组成员身份"></a>3. <strong>重新登录或刷新组成员身份</strong></h4><p>要使组变更生效，有两种方式：</p>
+<ul>
+<li>登出并重新登录系统（推荐）</li>
+<li>或使用以下命令刷新当前 shell 的组信息：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">newgrp docker</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="4-验证是否生效"><a href="#4-验证是否生效" class="headerlink" title="4. 验证是否生效"></a>4. <strong>验证是否生效</strong></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker version</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+
+<p>如果没有 <code>permission denied</code>，说明配置成功，可以正常使用 Docker 命令。</p>
+<hr>
+<h3 id="❗-补充说明"><a href="#❗-补充说明" class="headerlink" title="❗ 补充说明"></a>❗ 补充说明</h3><ul>
+<li>默认情况下，Docker 守护进程（<code>dockerd</code>）是以 <code>root</code> 身份运行的；非 <code>root</code> 用户如果想访问 Docker socket（通常是 <code>/var/run/docker.sock</code>），就必须加入 <code>docker</code> 用户组。</li>
+<li>使用 <code>docker</code> 组等同于拥有 <code>root</code> 权限，请谨慎授予该组权限。</li>
+</ul>
+<h4 id="创建私有-Docker-Registry"><a href="#创建私有-Docker-Registry" class="headerlink" title="创建私有 Docker Registry"></a>创建私有 Docker Registry</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 5000:5000 --restart=always --name registry \</span><br><span class="line">  -v /opt/registry:/var/lib/registry registry:2</span><br></pre></td></tr></table></figure>
+
+<p> 配置各节点信任 Registry<br>在所有节点 &#x2F;etc&#x2F;docker&#x2F;daemon.json：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="string">&quot;insecure-registries&quot;</span>: [<span class="string">&quot;192.168.0.10:5000&quot;</span>] &#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后重启：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reexec</span><br><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<p>安装cri-dockerd</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> rpm -ivh cri-dockerd*.rpm</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> systemctl daemon-reexec</span><br><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> cri-docker --now</span><br></pre></td></tr></table></figure>
+
+<p>方式二<br>使用二进制压缩包安装，将cri-docker 放到&#x2F;usr&#x2F;bin&#x2F;下，配置cri-docker.service和cri-docker.socket<br>先启动socket, </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/cri-dockerd --pod-infra-container-image=10.x.x.x:5000/pause:3.9 --container-runtime-endpoint fd://</span><br></pre></td></tr></table></figure>
+
+<p>注意：指定私有仓库的时候要在配置文件中指定， cri-dockerd 中 pause 镜像版本硬编码</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    defaultPodSandboxImageName    = <span class="string">&quot;registry.k8s.io/pause&quot;</span></span><br><span class="line">    defaultPodSandboxImageVersion = <span class="string">&quot;3.10&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><u><a target="_blank" rel="noopener" href="https://github.com/Mirantis/cri-dockerd/issues/97">https://github.com/Mirantis/cri-dockerd/issues/97</a><br><a target="_blank" rel="noopener" href="https://docs.k0sproject.io/v1.32.1+k0s.0/runtime/">https://docs.k0sproject.io/v1.32.1+k0s.0/runtime/</a></u></p>
+<p>后面使用kubelet 遇到拉取默认pause，则创建&#x2F;etc&#x2F;cri-dockerd&#x2F;config.toml</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sandbox_image = <span class="string">&quot;10.x.x.x:5000/pause:3.9&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="三、安装-kubeadm-kubelet-kubectl"><a href="#三、安装-kubeadm-kubelet-kubectl" class="headerlink" title="三、安装 kubeadm&#x2F;kubelet&#x2F;kubectl"></a>三、安装 kubeadm&#x2F;kubelet&#x2F;kubectl</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> rpms &amp;&amp; <span class="built_in">sudo</span> rpm -ivh kubelet-*.rpm kubeadm-*.rpm kubectl-*.rpm</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> kubelet</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、导入镜像"><a href="#四、导入镜像" class="headerlink" title="四、导入镜像"></a>四、导入镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> images</span><br><span class="line"><span class="keyword">for</span> img <span class="keyword">in</span> *.tar; <span class="keyword">do</span> <span class="built_in">sudo</span> docker load -i <span class="variable">$img</span>; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>可以让ai批量生成修改成自己当前注册地址并上传</p>
+<h3 id="五、初始化-Master"><a href="#五、初始化-Master" class="headerlink" title="五、初始化 Master"></a>五、初始化 Master</h3><h4 id="1-配置-kubeadm-模板"><a href="#1-配置-kubeadm-模板" class="headerlink" title="1. 配置 kubeadm 模板"></a>1. 配置 kubeadm 模板</h4><p><code>kubeadm-config.yaml</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">InitConfiguration</span></span><br><span class="line"><span class="attr">localAPIEndpoint:</span></span><br><span class="line">  <span class="attr">advertiseAddress:</span> <span class="number">192.168</span><span class="number">.0</span><span class="number">.10</span></span><br><span class="line">  <span class="attr">bindPort:</span> <span class="number">6443</span></span><br><span class="line"><span class="attr">nodeRegistration:</span></span><br><span class="line">  <span class="attr">criSocket:</span> <span class="string">unix:///var/run/cri-dockerd.sock</span> <span class="comment"># Configure connection to cri-dockerd</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterConfiguration</span></span><br><span class="line"><span class="attr">kubernetesVersion:</span> <span class="string">v1.29.0</span></span><br><span class="line"><span class="attr">imageRepository:</span> <span class="number">192.168</span><span class="number">.0</span><span class="number">.100</span><span class="string">:5000</span></span><br><span class="line"><span class="attr">networking:</span></span><br><span class="line">  <span class="attr">podSubnet:</span> <span class="number">10.244</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">  <span class="attr">serviceSubnet:</span> <span class="number">10.96</span><span class="number">.0</span><span class="number">.0</span><span class="string">/12</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeproxy.config.k8s.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">KubeProxyConfiguration</span></span><br><span class="line"><span class="attr">mode:</span> <span class="string">iptables</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-初始化"><a href="#2-初始化" class="headerlink" title="2. 初始化"></a>2. 初始化</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kubeadm init --config kubeadm-config.yaml --upload-certs</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-配置-kubectl-用户"><a href="#3-配置-kubectl-用户" class="headerlink" title="3. 配置 kubectl 用户"></a>3. 配置 kubectl 用户</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cp</span> /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+
+<h3 id="六、部署-Flannel-网络"><a href="#六、部署-Flannel-网络" class="headerlink" title="六、部署 Flannel 网络"></a>六、部署 Flannel 网络</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f kube-flannel.yml</span><br></pre></td></tr></table></figure>
+
+<h3 id="七、Node-节点加入"><a href="#七、Node-节点加入" class="headerlink" title="七、Node 节点加入"></a>七、Node 节点加入</h3><p>在 Node 节点执行 Master 初始化时输出的 join 指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kubeadm <span class="built_in">join</span> 192.168.0.10:6443 --token xxx \</span><br><span class="line">  --discovery-token-ca-cert-hash sha256:xxxx \</span><br><span class="line">  --cri-socket unix:///var/run/cri-dockerd.sock</span><br></pre></td></tr></table></figure>
+
+<p>确保每个节点都导入了需要镜像，且 docker 配置了信任私有仓库，同时已安装并启动 cri-dockerd</p>
+<h3 id="八、校验状态"><a href="#八、校验状态" class="headerlink" title="八、校验状态"></a>八、校验状态</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br><span class="line">kubectl get pods -A</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
+<li><p>Kubernetes 1.24+ 开始弃用 Dockershim，1.29 如继续使用 Docker 需安装 cri-dockerd。</p>
+</li>
+<li><p>私有 registry 必须是可访问的 IP + 端口。</p>
+</li>
+<li><p>Docker 必须配置 <code>insecure-registries</code>。</p>
+</li>
+<li><p>镜像名称必须和 kubeadm 配置一致。</p>
+</li>
+<li><p>如果不想使用私有仓库，需把镜像 tag 成 registry.k8s.io&#x2F;格式名称。</p>
+</li>
+<li><p>如使用非 root 用户安装：</p>
+<ul>
+<li>必须具有 <code>sudo</code> 权限，确保能安装软件包、配置 systemd 和访问 <code>/etc</code> 等目录。</li>
+<li><code>.kube/config</code> 拷贝后需执行 <code>chown</code>，确保普通用户能使用 kubectl。</li>
+<li>建议用 <code>sudo tee</code> 和 <code>sudo systemctl</code> 替代直接写入配置或启用服务命令。</li>
+</ul>
+</li>
+</ul>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/27/docker/docker%E5%AE%B9%E5%99%A8%E7%94%A8%E6%88%B7%E4%B8%8E%E5%AE%BF%E4%B8%BB%E6%9C%BA%E7%94%A8%E6%88%B7%E5%85%B3%E7%B3%BB/" rel="prev" title="docker容器用户与宿主机用户关系">
+                  <i class="fa fa-angle-left"></i> docker容器用户与宿主机用户关系
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/29/linux/centos%E9%85%8D%E7%BD%AEyum%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93/" rel="next" title="centos配置yum镜像仓库">
+                  centos配置yum镜像仓库 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

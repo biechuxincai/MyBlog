@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="more">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iptables详解">
+<meta property="og:url" content="http://example.com/2025/06/23/linux/iptables%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="more">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-23T15:41:23.000Z">
+<meta property="article:modified_time" content="2026-05-17T09:16:00.331Z">
+<meta property="article:author" content="Biechuxincai">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/06/23/linux/iptables%E8%AF%A6%E8%A7%A3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/06/23/linux/iptables%E8%AF%A6%E8%A7%A3/","path":"2025/06/23/linux/iptables详解/","title":"iptables详解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>iptables详解 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B8-%E4%B8%80%E3%80%81iptables-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">🔸 一、iptables 是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B8-%E4%BA%8C%E3%80%81firewalld-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">🔸 二、firewalld 是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B8-%E4%B8%89%E3%80%81%E5%AE%89%E5%85%A8%E7%BB%84%EF%BC%88Security-Group%EF%BC%89%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">🔸 三、安全组（Security Group）是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%84-%E5%AE%83%E4%BB%AC%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB%E5%92%8C%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">🔄 它们之间的关系和区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-%E6%80%BB%E7%BB%93%E4%B8%80%E5%8F%A5%E8%AF%9D%EF%BC%9A"><span class="nav-number">5.</span> <span class="nav-text">✅ 总结一句话：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE%EF%BC%9F"><span class="nav-number"></span> <span class="nav-text">🧠 一、什么是自定义链？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%A7-%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E5%92%8C%E4%BD%BF%E7%94%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE%EF%BC%9F"><span class="nav-number"></span> <span class="nav-text">🔧 二、如何创建和使用自定义链？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-1-%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE"><span class="nav-number">1.</span> <span class="nav-text">✅ 1. 创建自定义链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-2-%E6%B7%BB%E5%8A%A0%E8%A7%84%E5%88%99%E5%88%B0%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE%E4%B8%AD"><span class="nav-number">2.</span> <span class="nav-text">✅ 2. 添加规则到自定义链中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-3-%E5%9C%A8%E4%B8%BB%E9%93%BE%E4%B8%AD%E2%80%9C%E8%B0%83%E7%94%A8%E2%80%9D%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE"><span class="nav-number">3.</span> <span class="nav-text">✅ 3. 在主链中“调用”自定义链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-4-%E5%88%A0%E9%99%A4%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE%EF%BC%88%E5%85%88%E6%B8%85%E7%A9%BA%E5%86%8D%E5%88%A0%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">✅ 4. 删除自定义链（先清空再删）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%8E%AF-%E7%A4%BA%E4%BE%8B%EF%BC%9A%E9%98%BB%E6%AD%A2%E6%9F%90%E4%BA%9B-IP-SSH-%E7%99%BB%E5%BD%95"><span class="nav-number"></span> <span class="nav-text">🎯 示例：阻止某些 IP SSH 登录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%92%A1-%E4%BC%98%E5%8A%BF%E6%80%BB%E7%BB%93"><span class="nav-number"></span> <span class="nav-text">💡 优势总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%8C-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number"></span> <span class="nav-text">📌 注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E4%B8%80%E3%80%81Docker-%E9%BB%98%E8%AE%A4%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-iptables%EF%BC%9F"><span class="nav-number"></span> <span class="nav-text">🧠 一、Docker 默认如何使用 iptables？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-Docker-%E5%90%AF%E5%8A%A8%E6%97%B6%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">✅ Docker 启动时：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%8D-%E4%BA%8C%E3%80%81%E5%AE%9E%E9%99%85%E6%95%88%E6%9E%9C%E7%A4%BA%E4%BE%8B"><span class="nav-number"></span> <span class="nav-text">🔍 二、实际效果示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%B8%8F%E2%83%A3-nat-%E8%A1%A8%E4%B8%AD%E6%B7%BB%E5%8A%A0-DNAT-%E8%A7%84%E5%88%99%EF%BC%88%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">1️⃣ nat 表中添加 DNAT 规则（端口映射）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%B8%8F%E2%83%A3-filter-%E8%A1%A8%E4%B8%AD%E5%85%81%E8%AE%B8%E8%BD%AC%E5%8F%91%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-number">2.</span> <span class="nav-text">2️⃣ filter 表中允许转发数据包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%B8%8F%E2%83%A3-POSTROUTING-%E5%81%9A-SNAT-%E8%BD%AC%E6%8D%A2%EF%BC%88%E5%AE%B9%E5%99%A8%E8%AE%BF%E9%97%AE%E5%A4%96%E9%83%A8%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">3️⃣ POSTROUTING 做 SNAT 转换（容器访问外部）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%9A%A7-%E4%B8%89%E3%80%81%E5%92%8C-firewalld-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number"></span> <span class="nav-text">🚧 三、和 firewalld 的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%9B%A0-%E5%9B%9B%E3%80%81%E9%85%8D%E7%BD%AE-docker-%E6%98%AF%E5%90%A6%E4%BD%BF%E7%94%A8-iptables"><span class="nav-number"></span> <span class="nav-text">🛠 四、配置 docker 是否使用 iptables</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%B1-%E4%BA%94%E3%80%81%E5%8F%AF%E6%8F%92%E5%85%A5%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A7%84%E5%88%99%E7%9A%84%E9%93%BE%EF%BC%9ADOCKER-USER"><span class="nav-number"></span> <span class="nav-text">🧱 五、可插入自定义规则的链：DOCKER-USER</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%AA-%E5%85%AD%E3%80%81%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D-docker-%E7%9A%84-iptables-%E9%85%8D%E7%BD%AE"><span class="nav-number"></span> <span class="nav-text">🧪 六、查看当前 docker 的 iptables 配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-%E6%80%BB%E7%BB%93%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%90%86%E8%A7%A3-Docker-%E7%BD%91%E7%BB%9C%E4%B8%8E-iptables-%E5%85%B3%E7%B3%BB"><span class="nav-number"></span> <span class="nav-text">✅ 总结一张图理解 Docker 网络与 iptables 关系</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/23/linux/iptables%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="iptables详解 | Just do it">
+      <meta itemprop="description" content="more">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iptables详解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-23 23:41:23" itemprop="dateCreated datePublished" datetime="2025-06-23T23:41:23+08:00">2025-06-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-05-17 17:16:00" itemprop="dateModified" datetime="2026-05-17T17:16:00+08:00">2026-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">more</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>参考链接<br><a target="_blank" rel="noopener" href="https://lixiangyun.gitbook.io/iptables_doc_zh_cn">https://lixiangyun.gitbook.io/iptables_doc_zh_cn</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/metoy/p/4320813.html">http://www.cnblogs.com/metoy/p/4320813.html</a><br><a target="_blank" rel="noopener" href="http://www.ha97.com/4093.html">http://www.ha97.com/4093.html</a></p>
+<p><code>iptables</code>、<code>firewalld</code> 和 <strong>云安全组（Security Groups）</strong> 是网络安全相关的不同层次的防火机制，它们分别在不同的系统或平台中起作用，下面是它们的定义和关系：</p>
+<hr>
+<h3 id="🔸-一、iptables-是什么？"><a href="#🔸-一、iptables-是什么？" class="headerlink" title="🔸 一、iptables 是什么？"></a>🔸 一、iptables 是什么？</h3><p><code>iptables</code> 是 Linux 系统中最底层的 <strong>防火墙工具</strong>，用于配置内核中的 <code>netfilter</code> 模块。</p>
+<ul>
+<li>属于 <strong>主机级别的防火墙</strong>。</li>
+<li>基于规则（rules）控制网络流量的 <strong>过滤、转发、NAT（地址转换）等</strong>。</li>
+<li>手动操作比较复杂，规则顺序严格。</li>
+</ul>
+<p>🧠 举例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p tcp --dport 22 -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>表示允许所有进入本机的 22 端口（SSH）TCP 流量。</p>
+<hr>
+<h3 id="🔸-二、firewalld-是什么？"><a href="#🔸-二、firewalld-是什么？" class="headerlink" title="🔸 二、firewalld 是什么？"></a>🔸 二、firewalld 是什么？</h3><p><code>firewalld</code> 是 Linux（如 CentOS 7+）引入的一个 <strong>iptables 的前端管理工具</strong>。</p>
+<ul>
+<li>更方便地管理 iptables 规则。</li>
+<li>支持 <strong>区域（zone）和服务（service）</strong> 的概念。</li>
+<li>动态加载规则，不需要重启服务。</li>
+</ul>
+<p>🧠 举例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --add-service=http --permanent</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
+<p><strong>👉 实质上 firewalld 是用来间接操作 iptables（或 nftables） 的。</strong></p>
+<hr>
+<h3 id="🔸-三、安全组（Security-Group）是什么？"><a href="#🔸-三、安全组（Security-Group）是什么？" class="headerlink" title="🔸 三、安全组（Security Group）是什么？"></a>🔸 三、安全组（Security Group）是什么？</h3><p><strong>安全组是云平台（如阿里云、AWS、腾讯云等）提供的网络访问控制机制</strong>，作用在虚拟机实例（ECS、EC2）之上。</p>
+<ul>
+<li>是一种 <strong>虚拟防火墙</strong>，作用于 <strong>云平台层面</strong>。</li>
+<li>控制哪些 IP、端口、协议可以访问你的实例。</li>
+<li>属于 <strong>平台级别的网络访问控制</strong>。</li>
+</ul>
+<p>🧠 举例（阿里云）：</p>
+<ul>
+<li>放通某 ECS 实例的 80 端口给 0.0.0.0&#x2F;0（任何公网IP）。</li>
+<li>禁止其他 IP 访问 22 端口（SSH）。</li>
+</ul>
+<hr>
+<h3 id="🔄-它们之间的关系和区别？"><a href="#🔄-它们之间的关系和区别？" class="headerlink" title="🔄 它们之间的关系和区别？"></a>🔄 它们之间的关系和区别？</h3><table>
+<thead>
+<tr>
+<th>比较项</th>
+<th>iptables</th>
+<th>firewalld</th>
+<th>云安全组（Security Group）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>所属层级</td>
+<td>OS 内核层</td>
+<td>OS 用户空间工具</td>
+<td>云平台管理层（如 AWS、阿里云）</td>
+</tr>
+<tr>
+<td>控制范围</td>
+<td>主机网络流量</td>
+<td>主机网络流量（通过 iptables）</td>
+<td>云主机的入站&#x2F;出站流量</td>
+</tr>
+<tr>
+<td>配置方式</td>
+<td>命令行手动编写规则</td>
+<td>使用 zone + service 管理</td>
+<td>Web 控制台或 API</td>
+</tr>
+<tr>
+<td>生效对象</td>
+<td>本机</td>
+<td>本机</td>
+<td>云主机实例（ECS、VM）</td>
+</tr>
+<tr>
+<td>是否必须有</td>
+<td>是（Linux默认）</td>
+<td>可选</td>
+<td>云平台必须设置</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="✅-总结一句话："><a href="#✅-总结一句话：" class="headerlink" title="✅ 总结一句话："></a>✅ 总结一句话：</h3><ul>
+<li><strong>iptables 是最底层的流量控制工具</strong>；</li>
+<li><strong>firewalld 是管理 iptables 的工具</strong>；</li>
+<li><strong>安全组是云平台为实例提供的“外围防火墙”，类似虚拟边界墙</strong>。</li>
+</ul>
+<p><code>iptables</code> 中的**自定义链（User-defined chain）**是一个非常实用的功能，能让你将规则模块化、逻辑清晰、便于维护与复用，类似于代码里的“函数”或“子程序”。</p>
+<hr>
+<h2 id="🧠-一、什么是自定义链？"><a href="#🧠-一、什么是自定义链？" class="headerlink" title="🧠 一、什么是自定义链？"></a>🧠 一、什么是自定义链？</h2><p>iptables 的每个表（如 <code>filter</code>、<code>nat</code>）中都包含一些<strong>内置链（如 INPUT、FORWARD、OUTPUT）</strong>，你可以在这些链中定义规则。</p>
+<p><strong>自定义链</strong>是你自己定义的新的规则链，可以在已有链中“跳转”调用，就像函数一样。</p>
+<hr>
+<h2 id="🔧-二、如何创建和使用自定义链？"><a href="#🔧-二、如何创建和使用自定义链？" class="headerlink" title="🔧 二、如何创建和使用自定义链？"></a>🔧 二、如何创建和使用自定义链？</h2><h3 id="✅-1-创建自定义链"><a href="#✅-1-创建自定义链" class="headerlink" title="✅ 1. 创建自定义链"></a>✅ 1. 创建自定义链</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -N MY_CHAIN</span><br></pre></td></tr></table></figure>
+
+<p>这会创建一个名为 <code>MY_CHAIN</code> 的新链。</p>
+<hr>
+<h3 id="✅-2-添加规则到自定义链中"><a href="#✅-2-添加规则到自定义链中" class="headerlink" title="✅ 2. 添加规则到自定义链中"></a>✅ 2. 添加规则到自定义链中</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A MY_CHAIN -s 192.168.1.100 -j DROP</span><br><span class="line">iptables -A MY_CHAIN -s 192.168.1.200 -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>现在这个链的逻辑是：</p>
+<ul>
+<li>来自 192.168.1.100 的流量被丢弃；</li>
+<li>来自 192.168.1.200 的流量被接受。</li>
+</ul>
+<hr>
+<h3 id="✅-3-在主链中“调用”自定义链"><a href="#✅-3-在主链中“调用”自定义链" class="headerlink" title="✅ 3. 在主链中“调用”自定义链"></a>✅ 3. 在主链中“调用”自定义链</h3><p>比如你想让 INPUT 流量先走你定义的规则：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p tcp --dport 22 -j MY_CHAIN</span><br></pre></td></tr></table></figure>
+
+<p>意思是：</p>
+<ul>
+<li>所有目的端口为 22 的 TCP 流量 → 交给 <code>MY_CHAIN</code> 处理。</li>
+</ul>
+<p>如果 <code>MY_CHAIN</code> 中的规则不匹配，控制流会返回到调用它的 INPUT 链继续往下走。</p>
+<hr>
+<h3 id="✅-4-删除自定义链（先清空再删）"><a href="#✅-4-删除自定义链（先清空再删）" class="headerlink" title="✅ 4. 删除自定义链（先清空再删）"></a>✅ 4. 删除自定义链（先清空再删）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">iptables -F MY_CHAIN      <span class="comment"># 清空链</span></span><br><span class="line">iptables -D INPUT -j MY_CHAIN  <span class="comment"># 从主链移除引用</span></span><br><span class="line">iptables -X MY_CHAIN      <span class="comment"># 删除链</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🎯-示例：阻止某些-IP-SSH-登录"><a href="#🎯-示例：阻止某些-IP-SSH-登录" class="headerlink" title="🎯 示例：阻止某些 IP SSH 登录"></a>🎯 示例：阻止某些 IP SSH 登录</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">iptables -N BLOCK_BAD_IPS</span><br><span class="line">iptables -A BLOCK_BAD_IPS -s 10.0.0.1 -j DROP</span><br><span class="line">iptables -A BLOCK_BAD_IPS -s 10.0.0.2 -j DROP</span><br><span class="line"></span><br><span class="line">iptables -A INPUT -p tcp --dport 22 -j BLOCK_BAD_IPS</span><br></pre></td></tr></table></figure>
+
+<p>逻辑是：</p>
+<ol>
+<li>目标端口为 22 的 SSH 连接 → 先检查是否是坏 IP；</li>
+<li>是坏 IP 则丢弃，否则继续后续规则。</li>
+</ol>
+<hr>
+<h2 id="💡-优势总结"><a href="#💡-优势总结" class="headerlink" title="💡 优势总结"></a>💡 优势总结</h2><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>结构清晰</td>
+<td>将复杂规则分组、模块化</td>
+</tr>
+<tr>
+<td>易维护</td>
+<td>修改子链，不影响主链逻辑</td>
+</tr>
+<tr>
+<td>可复用</td>
+<td>多个主链可调用同一个子链</td>
+</tr>
+<tr>
+<td>降低冗余</td>
+<td>避免重复写类似规则</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="📌-注意事项"><a href="#📌-注意事项" class="headerlink" title="📌 注意事项"></a>📌 注意事项</h2><ul>
+<li>自定义链不能设置为默认链（不能像 INPUT 那样自动接收包）。</li>
+<li><code>iptables -L</code> 不会显示调用路径，要用 <code>iptables-save</code> 或 <code>iptables -v -L</code> 看得更清楚。</li>
+<li>链之间的 <code>-j</code> 跳转默认是“有状态”的，会在子链执行完后回到主链继续往下匹配。</li>
+</ul>
+<hr>
+<p>Docker 在 Linux 系统中会<strong>自动配置 iptables 规则</strong>，用来实现容器网络的隔离、端口映射、NAT 转换等功能，完全不需要你手动设置。但了解它的配置方式，对调试、防火墙策略设置、安全加固都非常关键。</p>
+<p>下面我来系统讲解：</p>
+<hr>
+<h2 id="🧠-一、Docker-默认如何使用-iptables？"><a href="#🧠-一、Docker-默认如何使用-iptables？" class="headerlink" title="🧠 一、Docker 默认如何使用 iptables？"></a>🧠 一、Docker 默认如何使用 iptables？</h2><h3 id="✅-Docker-启动时："><a href="#✅-Docker-启动时：" class="headerlink" title="✅ Docker 启动时："></a>✅ Docker 启动时：</h3><ol>
+<li><strong>创建 bridge 网络（默认是 <code>docker0</code>）</strong></li>
+<li><strong>自动设置 iptables NAT 规则</strong></li>
+<li><strong>创建以下 iptables 链（在 <code>filter</code> 和 <code>nat</code> 表）</strong>：</li>
+</ol>
+<p>常见的自动链有：</p>
+<table>
+<thead>
+<tr>
+<th>表</th>
+<th>链</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>nat</code></td>
+<td><code>DOCKER</code></td>
+<td>实现容器端口的 DNAT 转换</td>
+</tr>
+<tr>
+<td><code>filter</code></td>
+<td><code>DOCKER</code></td>
+<td>控制访问容器的包是否允许</td>
+</tr>
+<tr>
+<td><code>filter</code></td>
+<td><code>DOCKER-USER</code></td>
+<td>用户自定义链，<strong>优先于 DOCKER 链执行</strong></td>
+</tr>
+<tr>
+<td><code>filter</code></td>
+<td><code>FORWARD</code></td>
+<td>控制容器之间的流量转发</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🔍-二、实际效果示例"><a href="#🔍-二、实际效果示例" class="headerlink" title="🔍 二、实际效果示例"></a>🔍 二、实际效果示例</h2><p>假设你运行了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 8080:80 nginx</span><br></pre></td></tr></table></figure>
+
+<p>Docker 会做以下事情：</p>
+<h3 id="1️⃣-nat-表中添加-DNAT-规则（端口映射）"><a href="#1️⃣-nat-表中添加-DNAT-规则（端口映射）" class="headerlink" title="1️⃣ nat 表中添加 DNAT 规则（端口映射）"></a>1️⃣ <code>nat</code> 表中添加 DNAT 规则（端口映射）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A PREROUTING -p tcp --dport 8080 -j DNAT --to-destination 172.17.0.2:80</span><br></pre></td></tr></table></figure>
+
+<h3 id="2️⃣-filter-表中允许转发数据包"><a href="#2️⃣-filter-表中允许转发数据包" class="headerlink" title="2️⃣ filter 表中允许转发数据包"></a>2️⃣ <code>filter</code> 表中允许转发数据包</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A FORWARD -d 172.17.0.2/32 -p tcp -m tcp --dport 80 -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<h3 id="3️⃣-POSTROUTING-做-SNAT-转换（容器访问外部）"><a href="#3️⃣-POSTROUTING-做-SNAT-转换（容器访问外部）" class="headerlink" title="3️⃣ POSTROUTING 做 SNAT 转换（容器访问外部）"></a>3️⃣ <code>POSTROUTING</code> 做 SNAT 转换（容器访问外部）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -s 172.17.0.0/16 ! -o docker0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🚧-三、和-firewalld-的关系"><a href="#🚧-三、和-firewalld-的关系" class="headerlink" title="🚧 三、和 firewalld 的关系"></a>🚧 三、和 firewalld 的关系</h2><p>如前所述，<strong>Docker 直接操作 iptables，不通过 firewalld</strong>，所以你在 <code>firewall-cmd</code> 中看不到 Docker 映射的端口。</p>
+<p>为避免冲突或失效，建议：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --permanent --zone=trusted --add-interface=docker0</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="🛠-四、配置-docker-是否使用-iptables"><a href="#🛠-四、配置-docker-是否使用-iptables" class="headerlink" title="🛠 四、配置 docker 是否使用 iptables"></a>🛠 四、配置 docker 是否使用 iptables</h2><p>Docker 默认开启 iptables 支持：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dockerd --iptables=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>但你可以禁用（不推荐）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dockerd --iptables=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>这将禁用所有自动规则，端口映射等功能也会失效，你需要<strong>手动配置所有 iptables 规则</strong>。</p>
+<hr>
+<h2 id="🧱-五、可插入自定义规则的链：DOCKER-USER"><a href="#🧱-五、可插入自定义规则的链：DOCKER-USER" class="headerlink" title="🧱 五、可插入自定义规则的链：DOCKER-USER"></a>🧱 五、可插入自定义规则的链：DOCKER-USER</h2><p>Docker 会自动跳过 <code>INPUT</code> 和 <code>OUTPUT</code>，所有跨容器&#x2F;外部访问的流量最终走 <code>FORWARD</code>，你可以使用 <code>DOCKER-USER</code> 链添加自定义规则：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -I DOCKER-USER -s 1.2.3.4 -j DROP</span><br></pre></td></tr></table></figure>
+
+<p>这样你可以禁止某个 IP 访问所有容器，而不影响 Docker 自动生成的规则。</p>
+<hr>
+<h2 id="🧪-六、查看当前-docker-的-iptables-配置"><a href="#🧪-六、查看当前-docker-的-iptables-配置" class="headerlink" title="🧪 六、查看当前 docker 的 iptables 配置"></a>🧪 六、查看当前 docker 的 iptables 配置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -L -n -v</span><br><span class="line">iptables -t filter -L -n -v</span><br></pre></td></tr></table></figure>
+
+<p>重点关注 <code>DOCKER</code>、<code>DOCKER-USER</code>、<code>FORWARD</code> 链等。</p>
+<hr>
+<h2 id="✅-总结一张图理解-Docker-网络与-iptables-关系"><a href="#✅-总结一张图理解-Docker-网络与-iptables-关系" class="headerlink" title="✅ 总结一张图理解 Docker 网络与 iptables 关系"></a>✅ 总结一张图理解 Docker 网络与 iptables 关系</h2><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">       [客户端请求<span class="punctuation">:</span> <span class="number">8080</span>]</span><br><span class="line">              <span class="string">|</span></span><br><span class="line">        PREROUTING <span class="punctuation">(</span>nat<span class="punctuation">)</span></span><br><span class="line">              <span class="string">|</span></span><br><span class="line">      <span class="punctuation">+</span><span class="punctuation">-</span><span class="punctuation">-</span><span class="punctuation">-</span>&gt; DOCKER <span class="punctuation">(</span>DNAT 到容器IP<span class="punctuation">:</span><span class="number">80</span><span class="punctuation">)</span></span><br><span class="line">      <span class="string">|</span></span><br><span class="line">      v</span><br><span class="line">   FORWARD <span class="punctuation">(</span>filter<span class="punctuation">)</span></span><br><span class="line">      <span class="string">|</span></span><br><span class="line">      <span class="punctuation">+</span><span class="punctuation">-</span><span class="punctuation">-</span><span class="punctuation">-</span>&gt; DOCKER / DOCKER<span class="punctuation">-</span>USER <span class="punctuation">(</span>检查、放行<span class="punctuation">)</span></span><br><span class="line">      <span class="string">|</span></span><br><span class="line">      v</span><br><span class="line">容器 eth0（<span class="number">172.17</span>.<span class="number">0</span>.X<span class="punctuation">:</span><span class="number">80</span>）</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/18/java/springboot/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E9%97%AE%E9%A2%98/" rel="prev" title="记一次文件上传问题">
+                  <i class="fa fa-angle-left"></i> 记一次文件上传问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/26/Git/git%E9%85%8D%E7%BD%AE%E5%A4%A7%E5%B0%8F%E5%86%99%E6%95%8F%E6%84%9F/" rel="next" title="git配置大小写敏感">
+                  git配置大小写敏感 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

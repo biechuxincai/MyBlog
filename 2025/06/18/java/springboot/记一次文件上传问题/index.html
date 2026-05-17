@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="过滤器拦截处理文件，导致controller获取为空">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次文件上传问题">
+<meta property="og:url" content="http://example.com/2025/06/18/java/springboot/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="过滤器拦截处理文件，导致controller获取为空">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-18T04:50:26.000Z">
+<meta property="article:modified_time" content="2026-05-17T09:16:00.329Z">
+<meta property="article:author" content="Biechuxincai">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/06/18/java/springboot/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E9%97%AE%E9%A2%98/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/06/18/java/springboot/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E9%97%AE%E9%A2%98/","path":"2025/06/18/java/springboot/记一次文件上传问题/","title":"记一次文件上传问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>记一次文件上传问题 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-Spring-Boot-%E4%B8%AD%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%9E%90%E5%99%A8%E6%AF%94%E8%BE%83"><span class="nav-number">1.</span> <span class="nav-text">✅ Spring Boot 中文件上传的两种解析器比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B%EF%BC%88%E4%BD%A0%E7%9A%84%E6%83%85%E5%86%B5%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">✅ 常见错误使用示例（你的情况）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8-CommonsMultipartResolver-%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">✅ 正确使用 CommonsMultipartResolver 的方式：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-%E5%A6%82%E6%9E%9C%E4%BD%A0%E4%BD%BF%E7%94%A8%E7%9A%84%E6%98%AF-StandardServletMultipartResolver%EF%BC%9A"><span class="nav-number">4.</span> <span class="nav-text">✅ 如果你使用的是 StandardServletMultipartResolver：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E9%87%8D%E7%82%B9%E8%AE%B0%E5%BF%86%EF%BC%9A"><span class="nav-number">5.</span> <span class="nav-text">🧠 重点记忆：</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/18/java/springboot/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="记一次文件上传问题 | Just do it">
+      <meta itemprop="description" content="过滤器拦截处理文件，导致controller获取为空">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记一次文件上传问题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-18 12:50:26" itemprop="dateCreated datePublished" datetime="2025-06-18T12:50:26+08:00">2025-06-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-05-17 17:16:00" itemprop="dateModified" datetime="2026-05-17T17:16:00+08:00">2026-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">过滤器拦截处理文件，导致controller获取为空</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><hr>
+<h2 id="✅-Spring-Boot-中文件上传的两种解析器比较"><a href="#✅-Spring-Boot-中文件上传的两种解析器比较" class="headerlink" title="✅ Spring Boot 中文件上传的两种解析器比较"></a>✅ Spring Boot 中文件上传的两种解析器比较</h2><table>
+<thead>
+<tr>
+<th>项目</th>
+<th><code>CommonsMultipartResolver</code></th>
+<th><code>StandardServletMultipartResolver</code>（Spring Boot 默认）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>依赖库</td>
+<td>Apache Commons FileUpload（外部依赖）</td>
+<td>Servlet 3.0+（Java 原生）</td>
+</tr>
+<tr>
+<td>是否默认启用</td>
+<td>❌ 否（需手动配置 Bean）</td>
+<td>✅ 是（Spring Boot 自动配置）</td>
+</tr>
+<tr>
+<td>是否懒加载</td>
+<td>❌ 否（调用 <code>resolveMultipart()</code> 时立即解析）</td>
+<td>✅ 是（延迟到调用 <code>getParts()</code> 时解析）</td>
+</tr>
+<tr>
+<td>是否自动封装为 <code>MultipartHttpServletRequest</code></td>
+<td>❌ 否（你需要手动传给下游）</td>
+<td>✅ 是（Spring 自动封装并传递）</td>
+</tr>
+<tr>
+<td>是否会提前消费请求流</td>
+<td>✅ 是（流会被读取）</td>
+<td>❌ 否（不消费流，基于 Servlet 3 API）</td>
+</tr>
+<tr>
+<td>是否调用 <code>setMultipartFiles()</code>（注册上传文件）</td>
+<td>✅ 是（在 <code>resolveMultipart()</code> 中）</td>
+<td>✅ 是（内部自动处理）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="✅-常见错误使用示例（你的情况）"><a href="#✅-常见错误使用示例（你的情况）" class="headerlink" title="✅ 常见错误使用示例（你的情况）"></a>✅ 常见错误使用示例（你的情况）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">CommonsMultipartResolver</span> <span class="variable">resolver</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonsMultipartResolver</span>();</span><br><span class="line"><span class="keyword">if</span> (resolver.isMultipart(request)) &#123;</span><br><span class="line">    <span class="type">MultipartHttpServletRequest</span> <span class="variable">multipartRequest</span> <span class="operator">=</span> resolver.resolveMultipart(request);</span><br><span class="line">    <span class="comment">// ❌ 错误：你没有传 multipartRequest</span></span><br><span class="line">    filterChain.doFilter(request, response);  <span class="comment">// 原始 request，被提前消费，Controller 拿不到文件</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="✅-正确使用-CommonsMultipartResolver-的方式："><a href="#✅-正确使用-CommonsMultipartResolver-的方式：" class="headerlink" title="✅ 正确使用 CommonsMultipartResolver 的方式："></a>✅ 正确使用 CommonsMultipartResolver 的方式：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">CommonsMultipartResolver</span> <span class="variable">resolver</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonsMultipartResolver</span>();</span><br><span class="line"><span class="keyword">if</span> (resolver.isMultipart(request)) &#123;</span><br><span class="line">    <span class="type">MultipartHttpServletRequest</span> <span class="variable">multipartRequest</span> <span class="operator">=</span> resolver.resolveMultipart(request);</span><br><span class="line">    <span class="comment">// ✅ 正确：将处理后的 request 向下传递</span></span><br><span class="line">    filterChain.doFilter(multipartRequest, response);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    filterChain.doFilter(request, response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="✅-如果你使用的是-StandardServletMultipartResolver："><a href="#✅-如果你使用的是-StandardServletMultipartResolver：" class="headerlink" title="✅ 如果你使用的是 StandardServletMultipartResolver："></a>✅ 如果你使用的是 StandardServletMultipartResolver：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">StandardServletMultipartResolver</span> <span class="variable">resolver</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StandardServletMultipartResolver</span>();</span><br><span class="line"><span class="keyword">if</span> (resolver.isMultipart(request)) &#123;</span><br><span class="line">    <span class="comment">// 不需要提前包装，只判断是否 multipart 即可</span></span><br><span class="line">    <span class="comment">// 不调用 .resolveMultipart() 也没关系</span></span><br><span class="line">&#125;</span><br><span class="line">filterChain.doFilter(request, response);  <span class="comment">// 原始 request，Spring 会自动处理</span></span><br></pre></td></tr></table></figure>
+<p>为什么StandardServletMultipartResolver不会影响后面的处理呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">parseRequest</span><span class="params">(HttpServletRequest request)</span> &#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Collection&lt;Part&gt; parts = request.getParts();</span><br><span class="line">			<span class="built_in">this</span>.multipartParameterNames = <span class="keyword">new</span> <span class="title class_">LinkedHashSet</span>&lt;&gt;(parts.size());</span><br><span class="line">			MultiValueMap&lt;String, MultipartFile&gt; files = <span class="keyword">new</span> <span class="title class_">LinkedMultiValueMap</span>&lt;&gt;(parts.size());</span><br><span class="line">			<span class="keyword">for</span> (Part part : parts) &#123;</span><br><span class="line">				<span class="type">String</span> <span class="variable">headerValue</span> <span class="operator">=</span> part.getHeader(HttpHeaders.CONTENT_DISPOSITION);</span><br><span class="line">				<span class="type">ContentDisposition</span> <span class="variable">disposition</span> <span class="operator">=</span> ContentDisposition.parse(headerValue);</span><br><span class="line">				<span class="type">String</span> <span class="variable">filename</span> <span class="operator">=</span> disposition.getFilename();</span><br><span class="line">				<span class="keyword">if</span> (filename != <span class="literal">null</span>) &#123;</span><br><span class="line">					<span class="keyword">if</span> (filename.startsWith(<span class="string">&quot;=?&quot;</span>) &amp;&amp; filename.endsWith(<span class="string">&quot;?=&quot;</span>)) &#123;</span><br><span class="line">						filename = MimeDelegate.decode(filename);</span><br><span class="line">					&#125;</span><br><span class="line">					files.add(part.getName(), <span class="keyword">new</span> <span class="title class_">StandardMultipartFile</span>(part, filename));</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">else</span> &#123;</span><br><span class="line">					<span class="built_in">this</span>.multipartParameterNames.add(part.getName());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">      <span class="comment">//重点在这里</span></span><br><span class="line">			setMultipartFiles(files);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">			handleParseFailure(ex);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>setMultipartFiles(files),在 Spring 的 MultipartHttpServletRequest 对象中注册上传的文件信息，以供后续使用（如 Controller 中的 @RequestParam MultipartFile file 获取文件）。</li>
+</ul>
+<hr>
+<h2 id="🧠-重点记忆："><a href="#🧠-重点记忆：" class="headerlink" title="🧠 重点记忆："></a>🧠 重点记忆：</h2><ul>
+<li>✅ <strong>StandardServletMultipartResolver 更推荐，Spring Boot 默认支持，懒加载不消费流。</strong></li>
+<li>❌ <strong>CommonsMultipartResolver 不推荐使用于 Spring Boot，若使用必须手动传递解析后的 MultipartRequest，否则上传失败。</strong></li>
+<li>⚠️ 一旦提前用 <code>.getInputStream()</code> 或 <code>.getBytes()</code> 消费流，Controller 中将无法再获取文件。</li>
+</ul>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/17/linux/centos%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E4%BF%A1%E6%81%AF/" rel="prev" title="centos查看系统硬件信息">
+                  <i class="fa fa-angle-left"></i> centos查看系统硬件信息
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/06/23/linux/iptables%E8%AF%A6%E8%A7%A3/" rel="next" title="iptables详解">
+                  iptables详解 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

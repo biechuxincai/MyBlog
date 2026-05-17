@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Linux 下的 &#96;.so&#96;（shared object）本质上就是 **ELF（Executable and Linkable Format）格式的动态链接库**。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="so文件解析">
+<meta property="og:url" content="http://example.com/2025/12/03/linux/so%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="Linux 下的 &#96;.so&#96;（shared object）本质上就是 **ELF（Executable and Linkable Format）格式的动态链接库**。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-12-03T14:18:02.000Z">
+<meta property="article:modified_time" content="2026-05-17T09:16:00.332Z">
+<meta property="article:author" content="Biechuxincai">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/12/03/linux/so%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/12/03/linux/so%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90/","path":"2025/12/03/linux/so文件解析/","title":"so文件解析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>so文件解析 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%94%B6-%E4%B8%80%E3%80%81-so-%E6%96%87%E4%BB%B6%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">🔶 一、.so 文件是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%94%B6-%E4%BA%8C%E3%80%81ELF-so-%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%93%E6%9E%84%EF%BC%88%E5%AE%8F%E8%A7%82%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">🔶 二、ELF .so 文件的结构（宏观）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%94%B6-%E4%B8%89%E3%80%81%E9%87%8D%E8%A6%81%E7%9A%84-ELF-%E6%AE%B5%E8%A7%A3%E9%87%8A%EF%BC%88so-%E7%89%B9%E6%9C%89%E7%9A%84%E9%83%A8%E5%88%86%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">🔶 三、重要的 ELF 段解释（so 特有的部分）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%EF%B8%8F%E2%83%A3-dynamic-%E6%AE%B5%EF%BC%88so-%E7%9A%84%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">1️⃣ .dynamic 段（so 的核心）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%EF%B8%8F%E2%83%A3-plt%EF%BC%88Procedure-Linkage-Table%EF%BC%89-got%EF%BC%88Global-Offset-Table%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">2️⃣ .plt（Procedure Linkage Table） &amp; .got（Global Offset Table）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%EF%B8%8F%E2%83%A3-rel-plt-rela-plt"><span class="nav-number">3.3.</span> <span class="nav-text">3️⃣ .rel.plt &#x2F; .rela.plt</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%EF%B8%8F%E2%83%A3-init-array-fini-array"><span class="nav-number">3.4.</span> <span class="nav-text">4️⃣ .init_array &#x2F; .fini_array</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%94%B6-%E5%9B%9B%E3%80%81-so-%E7%9A%84%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B%EF%BC%88%E7%AE%80%E8%BF%B0%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">🔶 四、.so 的编译过程（简述）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%94%B6-%E4%BA%94%E3%80%81-so-%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%8C%E5%AE%9E%E6%88%98%E5%BF%85%E6%87%82%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">🔶 五、.so 的加载流程（重点，实战必懂）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E2%AD%90-%E5%85%AD%E3%80%81%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8%E6%97%B6%E5%8A%A0%E8%BD%BD-so%EF%BC%88%E9%9D%99%E6%80%81%E5%8A%A0%E8%BD%BD%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">⭐ 六、程序启动时加载 .so（静态加载）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-1%EF%BC%9A%E5%86%85%E6%A0%B8%E5%8A%A0%E8%BD%BD-ELF-%E4%B8%BB%E7%A8%8B%E5%BA%8F"><span class="nav-number">6.1.</span> <span class="nav-text">步骤 1：内核加载 ELF 主程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-2%EF%BC%9A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%99%A8-ld-so-%E5%BC%80%E5%A7%8B%E5%B7%A5%E4%BD%9C"><span class="nav-number">6.2.</span> <span class="nav-text">步骤 2：动态链接器 ld.so 开始工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%A7%A3%E6%9E%90%E4%B8%BB%E7%A8%8B%E5%BA%8F%E7%9A%84-dynamic-%E6%AE%B5"><span class="nav-number">6.2.1.</span> <span class="nav-text">1. 解析主程序的 .dynamic 段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%80%92%E5%BD%92%E5%8A%A0%E8%BD%BD%E6%89%80%E6%9C%89%E4%BE%9D%E8%B5%96%E7%9A%84-so"><span class="nav-number">6.2.2.</span> <span class="nav-text">2. 递归加载所有依赖的 so</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%B0%86%E5%90%84%E4%B8%AA-so-%E6%96%87%E4%BB%B6%E6%98%A0%E5%B0%84%E5%88%B0%E5%86%85%E5%AD%98%EF%BC%88mmap%EF%BC%89"><span class="nav-number">6.2.3.</span> <span class="nav-text">3. 将各个 .so 文件映射到内存（mmap）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%AF%B9%E6%89%80%E6%9C%89%E7%AB%8B%E5%8D%B3%E7%BB%91%E5%AE%9A%EF%BC%88non-LAZY%EF%BC%89%E7%9A%84%E7%AC%A6%E5%8F%B7%E5%81%9A%E9%87%8D%E5%AE%9A%E4%BD%8D"><span class="nav-number">6.2.4.</span> <span class="nav-text">4. 对所有立即绑定（non-LAZY）的符号做重定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%89%A7%E8%A1%8C-init-array-%E4%B8%AD%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0"><span class="nav-number">6.2.5.</span> <span class="nav-text">5. 执行 .init_array 中的初始化函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E8%B7%B3%E8%BD%AC%E5%88%B0%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E7%82%B9%EF%BC%88-start%EF%BC%89"><span class="nav-number">6.2.6.</span> <span class="nav-text">6. 跳转到用户程序入口点（_start）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E2%AD%90-%E4%B8%83%E3%80%81%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%B8%AD%E5%8A%A0%E8%BD%BD-so%EF%BC%88%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD-dlopen%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">⭐ 七、程序运行中加载 .so（动态加载 dlopen）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%94%B6-%E5%85%AB%E3%80%81-so-%E7%9A%84%E6%87%92%E7%BB%91%E5%AE%9A%EF%BC%88Lazy-Binding%EF%BC%89"><span class="nav-number">8.</span> <span class="nav-text">🔶 八、.so 的懒绑定（Lazy Binding）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%94%B6-%E4%B9%9D%E3%80%81%E6%80%BB%E7%BB%93%EF%BC%88%E6%95%B4%E4%BD%93%E6%A6%82%E5%BF%B5%E5%9B%BE%EF%BC%89"><span class="nav-number">9.</span> <span class="nav-text">🔶 九、总结（整体概念图）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/12/03/linux/so%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="so文件解析 | Just do it">
+      <meta itemprop="description" content="Linux 下的 `.so`（shared object）本质上就是 **ELF（Executable and Linkable Format）格式的动态链接库**。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          so文件解析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-03 22:18:02" itemprop="dateCreated datePublished" datetime="2025-12-03T22:18:02+08:00">2025-12-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-05-17 17:16:00" itemprop="dateModified" datetime="2026-05-17T17:16:00+08:00">2026-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">Linux 下的 `.so`（shared object）本质上就是 **ELF（Executable and Linkable Format）格式的动态链接库**。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><hr>
+<h1 id="🔶-一、-so-文件是什么？"><a href="#🔶-一、-so-文件是什么？" class="headerlink" title="🔶 一、.so 文件是什么？"></a>🔶 一、<code>.so</code> 文件是什么？</h1><p>Linux 下的 <code>.so</code>（shared object）本质上就是 <strong>ELF（Executable and Linkable Format）格式的动态链接库</strong>。</p>
+<p>ELF 本身可用在三种场景：</p>
+<ul>
+<li>可执行程序（ET_EXEC）</li>
+<li>可重定位目标文件（ET_REL，如 <code>.o</code>）</li>
+<li>动态库（ET_DYN，即 <code>.so</code>）</li>
+</ul>
+<p><code>.so</code> ≈ 一种特殊的可执行文件类型，只不过需要动态链接器来加载。</p>
+<hr>
+<h1 id="🔶-二、ELF-so-文件的结构（宏观）"><a href="#🔶-二、ELF-so-文件的结构（宏观）" class="headerlink" title="🔶 二、ELF .so 文件的结构（宏观）"></a>🔶 二、ELF <code>.so</code> 文件的结构（宏观）</h1><p>你可以把 <code>.so</code> 文件想象成一个“多段+多表”的结构，核心如下：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+--------------------------+</span></span><br><span class="line"><span class="section">| ELF Header               |</span></span><br><span class="line"><span class="section">+--------------------------+</span></span><br><span class="line"><span class="section">| Program Header Table     | 运行时使用（装载）</span></span><br><span class="line"><span class="section">+--------------------------+</span></span><br><span class="line"><span class="section">| Section Header Table     | 链接器用（链接时）</span></span><br><span class="line"><span class="section">+--------------------------+</span></span><br><span class="line">| .text      程序代码段     |</span><br><span class="line">| .data      初始化数据段   |</span><br><span class="line">| .bss       未初始化数据段 |</span><br><span class="line">| .rodata   常量字符串等    |</span><br><span class="line">| .plt/.got 动态链接辅助段   |</span><br><span class="line">| .dynamic   动态段信息     |</span><br><span class="line">| .dynsym    动态符号表     |</span><br><span class="line">| .dynstr    动态字符串表   |</span><br><span class="line"><span class="section">| .rel/.rela 重定位表       |</span></span><br><span class="line"><span class="section">+--------------------------+</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="🔶-三、重要的-ELF-段解释（so-特有的部分）"><a href="#🔶-三、重要的-ELF-段解释（so-特有的部分）" class="headerlink" title="🔶 三、重要的 ELF 段解释（so 特有的部分）"></a>🔶 三、重要的 ELF 段解释（so 特有的部分）</h1><h2 id="1️⃣-dynamic-段（so-的核心）"><a href="#1️⃣-dynamic-段（so-的核心）" class="headerlink" title="1️⃣ .dynamic 段（so 的核心）"></a><strong>1️⃣ .dynamic 段（so 的核心）</strong></h2><p>这个段告诉动态链接器：</p>
+<ul>
+<li>需要链接哪些库（DT_NEEDED）</li>
+<li>使用哪种重定位表（DT_RELA &#x2F; DT_REL）</li>
+<li>动态符号表在哪（DT_SYMTAB）</li>
+<li>字符串表在哪（DT_STRTAB）</li>
+<li>初始化函数在哪（DT_INIT_ARRAY）</li>
+<li>终止函数在哪（DT_FINI_ARRAY）</li>
+</ul>
+<p>几乎所有动态加载行为都依赖它。</p>
+<hr>
+<h2 id="2️⃣-plt（Procedure-Linkage-Table）-got（Global-Offset-Table）"><a href="#2️⃣-plt（Procedure-Linkage-Table）-got（Global-Offset-Table）" class="headerlink" title="2️⃣ .plt（Procedure Linkage Table） &amp; .got（Global Offset Table）"></a><strong>2️⃣ .plt（Procedure Linkage Table） &amp; .got（Global Offset Table）</strong></h2><p>动态函数调用的关键机制。</p>
+<p>你程序中调用 <code>printf()</code>，编译器不知道 <code>printf()</code> 在哪，所以生成跳板：</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">call</span> printf<span class="symbol">@plt</span></span><br></pre></td></tr></table></figure>
+
+<p>流程：</p>
+<ol>
+<li>CPU 先跳到 <code>.plt</code></li>
+<li><code>.plt</code> 间接跳转访问 <code>.got</code></li>
+<li>动态链接器（ld.so）会在第一次调用时修复 <code>.got</code> 的真实地址（lazy binding）</li>
+</ol>
+<blockquote>
+<p><code>.plt/.got</code> 是 so 格式最难理解但也是最关键的机制。</p>
+</blockquote>
+<hr>
+<h2 id="3️⃣-rel-plt-rela-plt"><a href="#3️⃣-rel-plt-rela-plt" class="headerlink" title="3️⃣ .rel.plt &#x2F; .rela.plt"></a><strong>3️⃣ .rel.plt &#x2F; .rela.plt</strong></h2><p>延迟绑定需要的重定位项。</p>
+<hr>
+<h2 id="4️⃣-init-array-fini-array"><a href="#4️⃣-init-array-fini-array" class="headerlink" title="4️⃣ .init_array &#x2F; .fini_array"></a><strong>4️⃣ .init_array &#x2F; .fini_array</strong></h2><p>so 加载与卸载时执行的构造函数、析构函数 C++ 依赖的东西。</p>
+<hr>
+<h1 id="🔶-四、-so-的编译过程（简述）"><a href="#🔶-四、-so-的编译过程（简述）" class="headerlink" title="🔶 四、.so 的编译过程（简述）"></a>🔶 四、<code>.so</code> 的编译过程（简述）</h1><p>这是 so 能工作的重要基础。</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">源代码 --&gt; .<span class="function"><span class="title">o</span> 文件 --&gt;</span> 链接器 <span class="function"><span class="title">ld</span> --&gt;</span> 生成 .so</span><br></pre></td></tr></table></figure>
+
+<p>步骤：</p>
+<ol>
+<li><code>.o</code> 文件是 <strong>ET_REL（可重定位）</strong></li>
+<li>ld 把 <code>.o</code> 和依赖库合并</li>
+<li>生成 <code>ET_DYN（位置无关）</code> 类型的 so 文件</li>
+<li>编译器一般会开启 <strong>PIC（Position Independent Code）</strong><br>让 so 可以被加载到任意地址（ASLR）</li>
+</ol>
+<hr>
+<h1 id="🔶-五、-so-的加载流程（重点，实战必懂）"><a href="#🔶-五、-so-的加载流程（重点，实战必懂）" class="headerlink" title="🔶 五、.so 的加载流程（重点，实战必懂）"></a>🔶 五、<code>.so</code> 的加载流程（重点，实战必懂）</h1><p>下面分 <strong>系统加载可执行文件</strong> 和 <strong>加载 so 文件</strong> 两个路径详讲。</p>
+<hr>
+<h1 id="⭐-六、程序启动时加载-so（静态加载）"><a href="#⭐-六、程序启动时加载-so（静态加载）" class="headerlink" title="⭐ 六、程序启动时加载 .so（静态加载）"></a>⭐ 六、程序启动时加载 <code>.so</code>（静态加载）</h1><p>假设你运行一个程序：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./a.<span class="keyword">out</span></span><br></pre></td></tr></table></figure>
+
+<p>这个程序中链接了 libc.so, libm.so 之类动态库。</p>
+<p>加载流程：</p>
+<hr>
+<h2 id="步骤-1：内核加载-ELF-主程序"><a href="#步骤-1：内核加载-ELF-主程序" class="headerlink" title="步骤 1：内核加载 ELF 主程序"></a><strong>步骤 1：内核加载 ELF 主程序</strong></h2><ol>
+<li>内核（通过 <code>execve</code>）读取 a.out 的 <strong>Program Header Table（PHT）</strong></li>
+<li>根据 <code>PT_LOAD</code> 把代码段&#x2F;数据段加载到内存</li>
+<li>发现其类型是 <strong>ET_EXEC 或 ET_DYN</strong> 并依赖动态库（有 PT_INTERP）</li>
+<li>于是内核加载动态链接器：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/lib64/ld-linux-x86-64.so.2</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="步骤-2：动态链接器-ld-so-开始工作"><a href="#步骤-2：动态链接器-ld-so-开始工作" class="headerlink" title="步骤 2：动态链接器 ld.so 开始工作"></a><strong>步骤 2：动态链接器 ld.so 开始工作</strong></h2><p><code>ld.so</code> 会：</p>
+<h3 id="1-解析主程序的-dynamic-段"><a href="#1-解析主程序的-dynamic-段" class="headerlink" title="1. 解析主程序的 .dynamic 段"></a>1. 解析主程序的 <code>.dynamic</code> 段</h3><p>得到：</p>
+<ul>
+<li>依赖哪些 so（DT_NEEDED）</li>
+<li>重定位表地址</li>
+<li>GOT&#x2F;PLT 信息</li>
+</ul>
+<hr>
+<h3 id="2-递归加载所有依赖的-so"><a href="#2-递归加载所有依赖的-so" class="headerlink" title="2. 递归加载所有依赖的 so"></a>2. 递归加载所有依赖的 so</h3><p>搜索路径顺序：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LD_LIBRARY_PATH</span><br><span class="line">rpath</span><br><span class="line">runpath</span><br><span class="line">/etc/ld.so.cache</span><br><span class="line">/lib /usr/lib 等默认目录</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-将各个-so-文件映射到内存（mmap）"><a href="#3-将各个-so-文件映射到内存（mmap）" class="headerlink" title="3. 将各个 .so 文件映射到内存（mmap）"></a>3. 将各个 <code>.so</code> 文件映射到内存（mmap）</h3><p>载入时并不会先修复所有符号（lazy binding）。</p>
+<hr>
+<h3 id="4-对所有立即绑定（non-LAZY）的符号做重定位"><a href="#4-对所有立即绑定（non-LAZY）的符号做重定位" class="headerlink" title="4. 对所有立即绑定（non-LAZY）的符号做重定位"></a>4. 对所有立即绑定（non-LAZY）的符号做重定位</h3><p>修复 GOT、全局变量引用等。</p>
+<hr>
+<h3 id="5-执行-init-array-中的初始化函数"><a href="#5-执行-init-array-中的初始化函数" class="headerlink" title="5. 执行 .init_array 中的初始化函数"></a>5. 执行 <code>.init_array</code> 中的初始化函数</h3><p>如 C++ 全局对象构造。</p>
+<hr>
+<h3 id="6-跳转到用户程序入口点（-start）"><a href="#6-跳转到用户程序入口点（-start）" class="headerlink" title="6. 跳转到用户程序入口点（_start）"></a>6. 跳转到用户程序入口点（_start）</h3><p>程序正式开始运行。</p>
+<hr>
+<h1 id="⭐-七、程序运行中加载-so（动态加载-dlopen）"><a href="#⭐-七、程序运行中加载-so（动态加载-dlopen）" class="headerlink" title="⭐ 七、程序运行中加载 .so（动态加载 dlopen）"></a>⭐ 七、程序运行中加载 <code>.so</code>（动态加载 dlopen）</h1><p>流程更“动态”，常用于插件系统：</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span>* h = dlopen(<span class="string">&quot;libxxx.so&quot;</span>, RTLD_LAZY);</span><br></pre></td></tr></table></figure>
+
+<p>内部流程：</p>
+<ol>
+<li><code>dlopen</code> 调用 ld.so 中的函数</li>
+<li>ld.so 做 mmap() 把 so 映射入进程</li>
+<li>解析 <code>.dynamic</code> 段</li>
+<li>若是 <code>RTLD_NOW</code> 则立即解析所有符号</li>
+<li>若是 <code>RTLD_LAZY</code> 则用懒绑定</li>
+<li>执行 <code>.init_array</code>（比如注册插件）</li>
+<li>返回 so 句柄</li>
+</ol>
+<p>查找 symbol:</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dlsym(<span class="name">h</span>, <span class="string">&quot;foo&quot;</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="🔶-八、-so-的懒绑定（Lazy-Binding）"><a href="#🔶-八、-so-的懒绑定（Lazy-Binding）" class="headerlink" title="🔶 八、.so 的懒绑定（Lazy Binding）"></a>🔶 八、<code>.so</code> 的懒绑定（Lazy Binding）</h1><p>这是 Linux 动态库加载最关键的性能技巧。</p>
+<p>首次调用 <code>func()</code> 时：</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">call</span> <span class="keyword">func</span>@<span class="title function_">plt</span></span><br></pre></td></tr></table></figure>
+
+<p>PLT 会跳到：</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">plt_stub</span> -&gt;</span> <span class="function"><span class="title">ld</span>.so -&gt;</span> 修复 GOT -&gt; 跳回真正的函数</span><br></pre></td></tr></table></figure>
+
+<p>之后就不需要再跳转 ld.so 了，性能和直接调用一样。</p>
+<hr>
+<h1 id="🔶-九、总结（整体概念图）"><a href="#🔶-九、总结（整体概念图）" class="headerlink" title="🔶 九、总结（整体概念图）"></a>🔶 九、总结（整体概念图）</h1><p>下面是一个高层次的 <code>.so</code> 加载流程图，帮助你把所有概念串起来：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+-------------------+</span></span><br><span class="line"><span class="section">| ELF main program  |</span></span><br><span class="line"><span class="section">+-------------------+</span></span><br><span class="line"><span class="code">          |</span></span><br><span class="line"><span class="code">          | execve</span></span><br><span class="line"><span class="section">          v</span></span><br><span class="line"><span class="section">+-------------------+</span></span><br><span class="line"><span class="section">| Kernel loads ld.so|</span></span><br><span class="line"><span class="section">+-------------------+</span></span><br><span class="line"><span class="code">          |</span></span><br><span class="line"><span class="section">          v</span></span><br><span class="line"><span class="section">+-------------------+</span></span><br><span class="line"><span class="section">| ld.so parses PHT  |</span></span><br><span class="line"><span class="section">+-------------------+</span></span><br><span class="line"><span class="code">          |</span></span><br><span class="line"><span class="section">          v</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br><span class="line">| Load all needed .so       |</span><br><span class="line"><span class="section">| (DT_NEEDED)               |</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br><span class="line"><span class="code">          |</span></span><br><span class="line"><span class="section">          v</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br><span class="line"><span class="section">| Relocation (GOT/PLT fix)  |</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br><span class="line"><span class="code">          |</span></span><br><span class="line"><span class="section">          v</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br><span class="line"><span class="section">| Run init_array constructors|</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br><span class="line"><span class="code">          |</span></span><br><span class="line"><span class="section">          v</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br><span class="line"><span class="section">|     Jump to _start        |</span></span><br><span class="line"><span class="section">+---------------------------+</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/11/30/linux/%E9%83%A8%E7%BD%B2n8n/" rel="prev" title="部署n8n">
+                  <i class="fa fa-angle-left"></i> 部署n8n
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/12/21/linux/ubuntu%E5%AE%89%E8%A3%85%E8%BE%93%E5%85%A5%E6%B3%95/" rel="next" title="ubuntu安装输入法">
+                  ubuntu安装输入法 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

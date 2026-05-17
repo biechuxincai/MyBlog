@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="以 **Ubuntu 20.04 &#x2F; 22.04 &#x2F; 24.04（GNOME 桌面）** 为主，差异我会特别指出。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ubuntu安装输入法">
+<meta property="og:url" content="http://example.com/2025/12/21/linux/ubuntu%E5%AE%89%E8%A3%85%E8%BE%93%E5%85%A5%E6%B3%95/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="以 **Ubuntu 20.04 &#x2F; 22.04 &#x2F; 24.04（GNOME 桌面）** 为主，差异我会特别指出。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-12-21T04:10:34.000Z">
+<meta property="article:modified_time" content="2026-05-17T09:16:00.332Z">
+<meta property="article:author" content="Biechuxincai">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/12/21/linux/ubuntu%E5%AE%89%E8%A3%85%E8%BE%93%E5%85%A5%E6%B3%95/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/12/21/linux/ubuntu%E5%AE%89%E8%A3%85%E8%BE%93%E5%85%A5%E6%B3%95/","path":"2025/12/21/linux/ubuntu安装输入法/","title":"ubuntu安装输入法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ubuntu安装输入法 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81Ubuntu-%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E7%9A%84%E2%80%9C%E6%95%B4%E4%BD%93%E5%8E%9F%E7%90%86%E2%80%9D%EF%BC%88%E5%85%88%E7%90%86%E8%A7%A3%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E8%A3%85%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">一、Ubuntu 中文输入法的“整体原理”（先理解为什么这么装）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%BB%84%E5%90%88"><span class="nav-number">1.1.</span> <span class="nav-text">常见组合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%96%B9%E6%A1%88%E4%B8%80%EF%BC%88%E6%8E%A8%E8%8D%90%E6%96%B0%E6%89%8B%EF%BC%89%EF%BC%9AIBus-%E4%B8%AD%E6%96%87%E6%8B%BC%E9%9F%B3%EF%BC%88%E6%9C%80%E7%A8%B3%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">二、方案一（推荐新手）：IBus + 中文拼音（最稳）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%B8%8F%E2%83%A3-%E5%AE%89%E8%A3%85%E4%B8%AD%E6%96%87%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81%EF%BC%88%E9%9D%9E%E5%B8%B8%E5%85%B3%E9%94%AE%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">1️⃣ 安装中文语言支持（非常关键）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%B8%8F%E2%83%A3-%E5%AE%89%E8%A3%85-IBus-%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">2️⃣ 安装 IBus 中文输入法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%B8%8F%E2%83%A3-%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F%E8%BE%93%E5%85%A5%E6%BA%90"><span class="nav-number">2.3.</span> <span class="nav-text">3️⃣ 配置系统输入源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%EF%B8%8F%E2%83%A3-%E5%88%87%E6%8D%A2%E8%BE%93%E5%85%A5%E6%B3%95"><span class="nav-number">2.4.</span> <span class="nav-text">4️⃣ 切换输入法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%EF%B8%8F%E2%83%A3-%E9%AA%8C%E8%AF%81%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F"><span class="nav-number">2.5.</span> <span class="nav-text">5️⃣ 验证是否成功</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%96%B9%E6%A1%88%E4%BA%8C%EF%BC%88%E8%BF%9B%E9%98%B6-%E7%A8%8B%E5%BA%8F%E5%91%98%EF%BC%89%EF%BC%9AFcitx5%EF%BC%88%E5%BC%BA%E7%83%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">三、方案二（进阶 &#x2F; 程序员）：Fcitx5（强烈推荐）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%B8%8D%E5%90%8C-Ubuntu-%E7%89%88%E6%9C%AC-%E2%86%92-%E6%AD%A3%E7%A1%AE%E5%8C%85%E5%90%8D%E5%AF%B9%E7%85%A7%E8%A1%A8%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">二、不同 Ubuntu 版本 → 正确包名对照表（重点）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9-Ubuntu-20-04-22-04"><span class="nav-number">4.1.</span> <span class="nav-text">🔹 Ubuntu 20.04 &#x2F; 22.04</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%F0%9F%94%B9-Ubuntu-23-10-24-04"><span class="nav-number">4.2.</span> <span class="nav-text">🔹 Ubuntu 23.10 &#x2F; 24.04</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%AD%A3%E7%A1%AE%E7%9A%84%E4%B8%80%E6%AC%A1%E6%80%A7%E5%AE%89%E8%A3%85%E5%91%BD%E4%BB%A4%EF%BC%88%E6%8E%A8%E8%8D%90%E4%BD%A0%E7%9B%B4%E6%8E%A5%E7%94%A8%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">三、正确的一次性安装命令（推荐你直接用）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9C%85-Ubuntu-24-04-23-10-%E6%8E%A8%E8%8D%90%E5%AE%8C%E6%95%B4%E5%91%BD%E4%BB%A4"><span class="nav-number">5.1.</span> <span class="nav-text">✅ Ubuntu 24.04 &#x2F; 23.10 推荐完整命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%A3%85%E5%AE%8C%E4%BD%86%E8%BF%98%E6%98%AF%E4%B8%8D%E8%83%BD%E7%94%A8%EF%BC%9F%E5%BF%85%E9%A1%BB%E5%81%9A%E8%BF%99%E4%B8%80%E6%AD%A5%EF%BC%88%E5%BE%88%E5%A4%9A%E4%BA%BA%E6%BC%8F%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">四、装完但还是不能用？必须做这一步（很多人漏）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%B8%8F%E2%83%A3-%E8%AE%BE%E7%BD%AE%E8%BE%93%E5%85%A5%E6%B3%95%E6%A1%86%E6%9E%B6"><span class="nav-number">6.1.</span> <span class="nav-text">1️⃣ 设置输入法框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%B8%8F%E2%83%A3-%E9%87%8D%E5%90%AF%EF%BC%88%E7%9C%9F%E7%9A%84%E5%BF%85%E9%A1%BB%EF%BC%89"><span class="nav-number">6.2.</span> <span class="nav-text">2️⃣ 重启（真的必须）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%B8%8F%E2%83%A3-%E6%89%93%E5%BC%80%E9%85%8D%E7%BD%AE%E5%B7%A5%E5%85%B7%E9%AA%8C%E8%AF%81"><span class="nav-number">6.3.</span> <span class="nav-text">3️⃣ 打开配置工具验证</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%A6%82%E6%9E%9C%E4%BD%A0%E6%83%B3%E7%A1%AE%E8%AE%A4%E2%80%9C%E7%B3%BB%E7%BB%9F%E9%87%8C%E5%88%B0%E5%BA%95%E6%9C%89%E5%93%AA%E4%BA%9B%E5%8C%85%E2%80%9D"><span class="nav-number">7.</span> <span class="nav-text">五、如果你想确认“系统里到底有哪些包”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E9%A2%9D%E5%A4%96%E6%8F%90%E9%86%92%E5%87%A0%E4%B8%AA%E5%AE%B9%E6%98%93%E8%B8%A9%E7%9A%84%E9%9A%90%E8%97%8F%E5%9D%91"><span class="nav-number">8.</span> <span class="nav-text">六、额外提醒几个容易踩的隐藏坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9D%8C-%E5%90%8C%E6%97%B6%E8%A3%85%E4%BA%86-IBus-%E5%92%8C-Fcitx5"><span class="nav-number">8.1.</span> <span class="nav-text">❌ 同时装了 IBus 和 Fcitx5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%B8%8F%E2%83%A3-%E9%85%8D%E7%BD%AE-Fcitx5"><span class="nav-number">8.2.</span> <span class="nav-text">3️⃣ 配置 Fcitx5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%EF%B8%8F%E2%83%A3-%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-number">8.3.</span> <span class="nav-text">4️⃣ 常用快捷键</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98-%E5%9D%91%EF%BC%88%E9%9D%9E%E5%B8%B8%E9%87%8D%E8%A6%81%EF%BC%89"><span class="nav-number">9.</span> <span class="nav-text">四、常见问题 &amp; 坑（非常重要）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9D%8C-1-%E8%83%BD%E5%88%87%E6%8D%A2%E8%BE%93%E5%85%A5%E6%B3%95%EF%BC%8C%E4%BD%86%E6%B2%A1%E5%80%99%E9%80%89%E6%A1%86"><span class="nav-number">9.1.</span> <span class="nav-text">❌ 1. 能切换输入法，但没候选框</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9D%8C-2-%E7%BB%88%E7%AB%AF%E9%87%8C%E4%B8%8D%E8%83%BD%E8%BE%93%E5%85%A5%E4%B8%AD%E6%96%87"><span class="nav-number">9.2.</span> <span class="nav-text">❌ 2. 终端里不能输入中文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9D%8C-3-VSCode-JetBrains-%E4%B8%8D%E8%B7%9F%E9%9A%8F%E8%BE%93%E5%85%A5%E6%B3%95"><span class="nav-number">9.3.</span> <span class="nav-text">❌ 3. VSCode &#x2F; JetBrains 不跟随输入法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%9D%8C-4-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%8D%E5%AF%B9%EF%BC%88%E8%80%81%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%EF%BC%89"><span class="nav-number">9.4.</span> <span class="nav-text">❌ 4. 环境变量不对（老系统常见）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%88%91%E7%BB%99%E4%BD%A0%E7%9A%84%E9%80%89%E6%8B%A9%E5%BB%BA%E8%AE%AE%EF%BC%88%E8%AF%B4%E4%BA%BA%E8%AF%9D%E7%89%88%EF%BC%89"><span class="nav-number">10.</span> <span class="nav-text">五、我给你的选择建议（说人话版）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/12/21/linux/ubuntu%E5%AE%89%E8%A3%85%E8%BE%93%E5%85%A5%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ubuntu安装输入法 | Just do it">
+      <meta itemprop="description" content="以 **Ubuntu 20.04 / 22.04 / 24.04（GNOME 桌面）** 为主，差异我会特别指出。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ubuntu安装输入法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-21 12:10:34" itemprop="dateCreated datePublished" datetime="2025-12-21T12:10:34+08:00">2025-12-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-05-17 17:16:00" itemprop="dateModified" datetime="2026-05-17T17:16:00+08:00">2026-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">以 **Ubuntu 20.04 / 22.04 / 24.04（GNOME 桌面）** 为主，差异我会特别指出。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>以 <strong>Ubuntu 20.04 &#x2F; 22.04 &#x2F; 24.04（GNOME 桌面）</strong> 为主，差异我会特别指出。</p>
+<hr>
+<h2 id="一、Ubuntu-中文输入法的“整体原理”（先理解为什么这么装）"><a href="#一、Ubuntu-中文输入法的“整体原理”（先理解为什么这么装）" class="headerlink" title="一、Ubuntu 中文输入法的“整体原理”（先理解为什么这么装）"></a>一、Ubuntu 中文输入法的“整体原理”（先理解为什么这么装）</h2><p>Ubuntu 的输入法体系是分层的，大概是这样：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">应用程序（Chrome <span class="symbol">/</span> VSCode <span class="symbol">/</span> Terminal）</span><br><span class="line">        ↑</span><br><span class="line">   输入法框架（IBus <span class="symbol">/</span> Fcitx5）</span><br><span class="line">        ↑</span><br><span class="line">   输入法引擎（拼音 <span class="symbol">/</span> 双拼 <span class="symbol">/</span> 五笔）</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见组合"><a href="#常见组合" class="headerlink" title="常见组合"></a>常见组合</h3><table>
+<thead>
+<tr>
+<th>输入法框架</th>
+<th>输入法引擎</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>IBus</strong></td>
+<td>ibus-pinyin</td>
+<td>Ubuntu 默认，稳定但功能一般</td>
+</tr>
+<tr>
+<td><strong>IBus</strong></td>
+<td>ibus-libpinyin</td>
+<td>推荐，词库和智能度更好</td>
+</tr>
+<tr>
+<td><strong>Fcitx5</strong></td>
+<td>fcitx5-rime</td>
+<td>高度可定制，程序员&#x2F;重度用户最爱</td>
+</tr>
+<tr>
+<td><strong>Fcitx5</strong></td>
+<td>fcitx5-pinyin</td>
+<td>即装即用</td>
+</tr>
+</tbody></table>
+<p>👉 <strong>新手 &#x2F; 稳定党</strong>：<code>IBus + libpinyin</code><br>👉 <strong>折腾党 &#x2F; 程序员 &#x2F; 想双拼</strong>：<code>Fcitx5 + Rime</code></p>
+<hr>
+<h2 id="二、方案一（推荐新手）：IBus-中文拼音（最稳）"><a href="#二、方案一（推荐新手）：IBus-中文拼音（最稳）" class="headerlink" title="二、方案一（推荐新手）：IBus + 中文拼音（最稳）"></a>二、方案一（推荐新手）：IBus + 中文拼音（最稳）</h2><h3 id="1️⃣-安装中文语言支持（非常关键）"><a href="#1️⃣-安装中文语言支持（非常关键）" class="headerlink" title="1️⃣ 安装中文语言支持（非常关键）"></a>1️⃣ 安装中文语言支持（非常关键）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install language-pack-zh-hans</span><br></pre></td></tr></table></figure>
+
+<p>然后：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> reboot</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⚠️ <strong>不重启是很多人失败的原因之一</strong></p>
+</blockquote>
+<hr>
+<h3 id="2️⃣-安装-IBus-中文输入法"><a href="#2️⃣-安装-IBus-中文输入法" class="headerlink" title="2️⃣ 安装 IBus 中文输入法"></a>2️⃣ 安装 IBus 中文输入法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install ibus ibus-pinyin ibus-libpinyin</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>ibus</code>：输入法框架</li>
+<li><code>ibus-pinyin</code>：老拼音</li>
+<li><code>ibus-libpinyin</code>：<strong>推荐用这个</strong></li>
+</ul>
+<hr>
+<h3 id="3️⃣-配置系统输入源"><a href="#3️⃣-配置系统输入源" class="headerlink" title="3️⃣ 配置系统输入源"></a>3️⃣ 配置系统输入源</h3><p>打开：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Settings（设置） → <span class="built_in">Keyboard</span>（键盘） → Input Sources</span><br></pre></td></tr></table></figure>
+
+<p>点击 <code>+</code>：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Chinese</span> → Chinese (Intelligent Pinyin)</span><br></pre></td></tr></table></figure>
+
+<p>或：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Chinese</span> → Chinese (Pinyin) → libpinyin</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4️⃣-切换输入法"><a href="#4️⃣-切换输入法" class="headerlink" title="4️⃣ 切换输入法"></a>4️⃣ 切换输入法</h3><ul>
+<li><code>Super + Space</code>（Win 键 + 空格）</li>
+<li>或系统右上角托盘</li>
+</ul>
+<hr>
+<h3 id="5️⃣-验证是否成功"><a href="#5️⃣-验证是否成功" class="headerlink" title="5️⃣ 验证是否成功"></a>5️⃣ 验证是否成功</h3><p>打开终端或浏览器，输入：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">nihao</span></span><br></pre></td></tr></table></figure>
+
+<p>看到候选框，说明成功 ✅</p>
+<hr>
+<h2 id="三、方案二（进阶-程序员）：Fcitx5（强烈推荐）"><a href="#三、方案二（进阶-程序员）：Fcitx5（强烈推荐）" class="headerlink" title="三、方案二（进阶 &#x2F; 程序员）：Fcitx5（强烈推荐）"></a>三、方案二（进阶 &#x2F; 程序员）：Fcitx5（强烈推荐）</h2><h2 id="二、不同-Ubuntu-版本-→-正确包名对照表（重点）"><a href="#二、不同-Ubuntu-版本-→-正确包名对照表（重点）" class="headerlink" title="二、不同 Ubuntu 版本 → 正确包名对照表（重点）"></a>二、不同 Ubuntu 版本 → 正确包名对照表（重点）</h2><p>先确认你系统版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsb_release -a</span><br></pre></td></tr></table></figure>
+
+<h3 id="🔹-Ubuntu-20-04-22-04"><a href="#🔹-Ubuntu-20-04-22-04" class="headerlink" title="🔹 Ubuntu 20.04 &#x2F; 22.04"></a>🔹 Ubuntu 20.04 &#x2F; 22.04</h3><p>这些包名是 <strong>存在的</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install fcitx5-frontend-gtk fcitx5-frontend-qt</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="🔹-Ubuntu-23-10-24-04"><a href="#🔹-Ubuntu-23-10-24-04" class="headerlink" title="🔹 Ubuntu 23.10 &#x2F; 24.04"></a>🔹 Ubuntu 23.10 &#x2F; 24.04</h3><p>包名已经 <strong>拆分 &#x2F; 重命名</strong> 了，正确的是👇</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install fcitx5-frontend-gtk3 fcitx5-frontend-qt5</span><br></pre></td></tr></table></figure>
+
+<p>如果你还用 GTK4（少数应用）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install fcitx5-frontend-gtk4</span><br></pre></td></tr></table></figure>
+
+<p>✅ <strong>所以你刚才报错是“包不存在”，不是依赖问题</strong></p>
+<hr>
+<h2 id="三、正确的一次性安装命令（推荐你直接用）"><a href="#三、正确的一次性安装命令（推荐你直接用）" class="headerlink" title="三、正确的一次性安装命令（推荐你直接用）"></a>三、正确的一次性安装命令（推荐你直接用）</h2><h3 id="✅-Ubuntu-24-04-23-10-推荐完整命令"><a href="#✅-Ubuntu-24-04-23-10-推荐完整命令" class="headerlink" title="✅ Ubuntu 24.04 &#x2F; 23.10 推荐完整命令"></a>✅ Ubuntu 24.04 &#x2F; 23.10 推荐完整命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install \</span><br><span class="line">fcitx5 \</span><br><span class="line">fcitx5-chinese-addons \</span><br><span class="line">fcitx5-frontend-gtk3 \</span><br><span class="line">fcitx5-frontend-qt5</span><br></pre></td></tr></table></figure>
+
+<p>如果你想用 Rime（强烈推荐）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install fcitx5-rime</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="四、装完但还是不能用？必须做这一步（很多人漏）"><a href="#四、装完但还是不能用？必须做这一步（很多人漏）" class="headerlink" title="四、装完但还是不能用？必须做这一步（很多人漏）"></a>四、装完但还是不能用？必须做这一步（<strong>很多人漏</strong>）</h2><h3 id="1️⃣-设置输入法框架"><a href="#1️⃣-设置输入法框架" class="headerlink" title="1️⃣ 设置输入法框架"></a>1️⃣ 设置输入法框架</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">im-config</span><br></pre></td></tr></table></figure>
+
+<p>选择：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fcitx5</span><br></pre></td></tr></table></figure>
+
+<p>⚠️ <strong>一定要选，不是自动生效</strong></p>
+<hr>
+<h3 id="2️⃣-重启（真的必须）"><a href="#2️⃣-重启（真的必须）" class="headerlink" title="2️⃣ 重启（真的必须）"></a>2️⃣ 重启（真的必须）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3️⃣-打开配置工具验证"><a href="#3️⃣-打开配置工具验证" class="headerlink" title="3️⃣ 打开配置工具验证"></a>3️⃣ 打开配置工具验证</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fcitx5-configtool</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Input Method</li>
+<li>Add → Pinyin &#x2F; Rime</li>
+<li>快捷键默认 <code>Ctrl + Space</code></li>
+</ul>
+<hr>
+<h2 id="五、如果你想确认“系统里到底有哪些包”"><a href="#五、如果你想确认“系统里到底有哪些包”" class="headerlink" title="五、如果你想确认“系统里到底有哪些包”"></a>五、如果你想确认“系统里到底有哪些包”</h2><p>这个方法以后特别有用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt search fcitx5-frontend</span><br></pre></td></tr></table></figure>
+
+<p>你会看到类似：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fcitx5-frontend-gtk3</span><br><span class="line">fcitx5-frontend-gtk4</span><br><span class="line">fcitx5-frontend-qt5</span><br></pre></td></tr></table></figure>
+
+<p>👉 <strong>apt search 是排错神器</strong></p>
+<hr>
+<h2 id="六、额外提醒几个容易踩的隐藏坑"><a href="#六、额外提醒几个容易踩的隐藏坑" class="headerlink" title="六、额外提醒几个容易踩的隐藏坑"></a>六、额外提醒几个容易踩的隐藏坑</h2><h3 id="❌-同时装了-IBus-和-Fcitx5"><a href="#❌-同时装了-IBus-和-Fcitx5" class="headerlink" title="❌ 同时装了 IBus 和 Fcitx5"></a>❌ 同时装了 IBus 和 Fcitx5</h3><p>会导致：</p>
+<ul>
+<li>能切换但没候选框</li>
+<li>VSCode &#x2F; 浏览器异常</li>
+</ul>
+<p>检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$XMODIFIERS</span></span><br></pre></td></tr></table></figure>
+
+<p>如果你选的是 fcitx5，应该是：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@<span class="attribute">im</span>=fcitx</span><br></pre></td></tr></table></figure>
+
+<hr>
+<hr>
+<h3 id="3️⃣-配置-Fcitx5"><a href="#3️⃣-配置-Fcitx5" class="headerlink" title="3️⃣ 配置 Fcitx5"></a>3️⃣ 配置 Fcitx5</h3><p>启动配置工具：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fcitx5-configtool</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Input Method → <code>+</code></p>
+</li>
+<li><p>添加：</p>
+<ul>
+<li><strong>Pinyin</strong></li>
+<li>或 <strong>Rime</strong></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4️⃣-常用快捷键"><a href="#4️⃣-常用快捷键" class="headerlink" title="4️⃣ 常用快捷键"></a>4️⃣ 常用快捷键</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>快捷键</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>中&#x2F;英切换</td>
+<td><code>Ctrl + Space</code></td>
+</tr>
+<tr>
+<td>切换输入法</td>
+<td><code>Ctrl + Shift</code></td>
+</tr>
+<tr>
+<td>设置界面</td>
+<td>托盘右键</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、常见问题-坑（非常重要）"><a href="#四、常见问题-坑（非常重要）" class="headerlink" title="四、常见问题 &amp; 坑（非常重要）"></a>四、常见问题 &amp; 坑（非常重要）</h2><h3 id="❌-1-能切换输入法，但没候选框"><a href="#❌-1-能切换输入法，但没候选框" class="headerlink" title="❌ 1. 能切换输入法，但没候选框"></a>❌ 1. 能切换输入法，但没候选框</h3><p>原因：</p>
+<ul>
+<li>GTK &#x2F; QT 前端没装</li>
+</ul>
+<p>解决：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install fcitx5-frontend-gtk fcitx5-frontend-qt</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="❌-2-终端里不能输入中文"><a href="#❌-2-终端里不能输入中文" class="headerlink" title="❌ 2. 终端里不能输入中文"></a>❌ 2. 终端里不能输入中文</h3><p><strong>正常现象</strong>，取决于终端：</p>
+<ul>
+<li>GNOME Terminal：OK</li>
+<li>一些纯 TTY：不支持</li>
+<li>SSH 远程：和本地无关</li>
+</ul>
+<hr>
+<h3 id="❌-3-VSCode-JetBrains-不跟随输入法"><a href="#❌-3-VSCode-JetBrains-不跟随输入法" class="headerlink" title="❌ 3. VSCode &#x2F; JetBrains 不跟随输入法"></a>❌ 3. VSCode &#x2F; JetBrains 不跟随输入法</h3><p>优先用 <strong>Fcitx5</strong><br>IBus 在 Electron&#x2F;Java 应用里历史问题多</p>
+<hr>
+<h3 id="❌-4-环境变量不对（老系统常见）"><a href="#❌-4-环境变量不对（老系统常见）" class="headerlink" title="❌ 4. 环境变量不对（老系统常见）"></a>❌ 4. 环境变量不对（老系统常见）</h3><p>检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$XMODIFIERS</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$GTK_IM_MODULE</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$QT_IM_MODULE</span></span><br></pre></td></tr></table></figure>
+
+<p>Fcitx5 正确应是：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">fcitx</span></span><br></pre></td></tr></table></figure>
+
+<p>手动修复（不推荐优先用）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> GTK_IM_MODULE=fcitx</span><br><span class="line"><span class="built_in">export</span> QT_IM_MODULE=fcitx</span><br><span class="line"><span class="built_in">export</span> XMODIFIERS=@im=fcitx</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、我给你的选择建议（说人话版）"><a href="#五、我给你的选择建议（说人话版）" class="headerlink" title="五、我给你的选择建议（说人话版）"></a>五、我给你的选择建议（说人话版）</h2><table>
+<thead>
+<tr>
+<th>使用场景</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>刚装 Ubuntu</td>
+<td>IBus + libpinyin</td>
+</tr>
+<tr>
+<td>写代码多</td>
+<td>Fcitx5</td>
+</tr>
+<tr>
+<td>双拼 &#x2F; 五笔 &#x2F; 定制</td>
+<td>Fcitx5 + Rime</td>
+</tr>
+<tr>
+<td>稳定优先</td>
+<td>IBus</td>
+</tr>
+<tr>
+<td>可玩性</td>
+<td>Fcitx5</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/12/03/linux/so%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90/" rel="prev" title="so文件解析">
+                  <i class="fa fa-angle-left"></i> so文件解析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/12/23/magisk%E4%B8%8Elsposed%E6%9C%89%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB/" rel="next" title="magisk与lsposed有什么关系">
+                  magisk与lsposed有什么关系 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

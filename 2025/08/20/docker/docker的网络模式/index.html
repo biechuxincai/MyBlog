@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="理解 Docker 的网络模式是使用容器化时的核心之一，因为它直接影响到容器之间、容器与宿主机之间，以及容器与外部网络之间的通信方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker的网络模式">
+<meta property="og:url" content="http://example.com/2025/08/20/docker/docker%E7%9A%84%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="理解 Docker 的网络模式是使用容器化时的核心之一，因为它直接影响到容器之间、容器与宿主机之间，以及容器与外部网络之间的通信方式">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-08-20T13:25:39.000Z">
+<meta property="article:modified_time" content="2026-05-17T09:16:00.327Z">
+<meta property="article:author" content="Biechuxincai">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/08/20/docker/docker%E7%9A%84%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/08/20/docker/docker%E7%9A%84%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F/","path":"2025/08/20/docker/docker的网络模式/","title":"docker的网络模式"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>docker的网络模式 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%B9-Docker-%E7%9A%84%E5%B8%B8%E8%A7%81%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">🔹 Docker 的常见网络模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-bridge%EF%BC%88%E9%BB%98%E8%AE%A4%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">1. bridge（默认模式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-host"><span class="nav-number">1.2.</span> <span class="nav-text">2. host</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-none"><span class="nav-number">1.3.</span> <span class="nav-text">3. none</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-container"><span class="nav-number">1.4.</span> <span class="nav-text">4. container</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E8%87%AA%E5%AE%9A%E4%B9%89-bridge-%E7%BD%91%E7%BB%9C"><span class="nav-number">1.5.</span> <span class="nav-text">5. 自定义 bridge 网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-overlay-%E7%BD%91%E7%BB%9C%EF%BC%88Swarm-K8s-%E7%94%A8%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">6. overlay 网络（Swarm&#x2F;K8s 用）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%B9-%E5%AF%B9%E6%AF%94%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">🔹 对比总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%B9-%E5%AE%9E%E9%99%85%E5%BC%80%E5%8F%91-%E7%94%9F%E4%BA%A7%E7%9A%84%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AE%AE"><span class="nav-number">3.</span> <span class="nav-text">🔹 实际开发&#x2F;生产的使用建议</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/08/20/docker/docker%E7%9A%84%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="docker的网络模式 | Just do it">
+      <meta itemprop="description" content="理解 Docker 的网络模式是使用容器化时的核心之一，因为它直接影响到容器之间、容器与宿主机之间，以及容器与外部网络之间的通信方式">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          docker的网络模式
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-08-20 21:25:39" itemprop="dateCreated datePublished" datetime="2025-08-20T21:25:39+08:00">2025-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-05-17 17:16:00" itemprop="dateModified" datetime="2026-05-17T17:16:00+08:00">2026-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">理解 Docker 的网络模式是使用容器化时的核心之一，因为它直接影响到容器之间、容器与宿主机之间，以及容器与外部网络之间的通信方式</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>理解 Docker 的网络模式是使用容器化时的核心之一，因为它直接影响到容器之间、容器与宿主机之间，以及容器与外部网络之间的通信方式。下面我详细给你拆解一下：</p>
+<hr>
+<h2 id="🔹-Docker-的常见网络模式"><a href="#🔹-Docker-的常见网络模式" class="headerlink" title="🔹 Docker 的常见网络模式"></a>🔹 Docker 的常见网络模式</h2><p>Docker 提供了几种网络模式（network driver），常用的有以下几种：</p>
+<h3 id="1-bridge（默认模式）"><a href="#1-bridge（默认模式）" class="headerlink" title="1. bridge（默认模式）"></a>1. <strong>bridge（默认模式）</strong></h3><ul>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>当你运行 <code>docker run -d nginx</code> 没有指定网络时，容器会被分配到一个默认的 <strong>bridge 网络（docker0 网桥）</strong>。</li>
+<li>容器有自己的 <strong>独立 IP（虚拟网卡）</strong>，在宿主机 <code>docker0</code> 网卡上桥接。</li>
+<li>容器之间通过 <strong>容器 IP</strong> 或者 <strong>自定义网络中的容器名（DNS）</strong> 来通信。</li>
+<li>宿主机可以通过端口映射（<code>-p 8080:80</code>）来访问容器服务。</li>
+</ul>
+</li>
+<li><p><strong>使用场景</strong>：大多数应用场景，容器之间需要隔离，但也能通过网络互通。</p>
+</li>
+</ul>
+<hr>
+<h3 id="2-host"><a href="#2-host" class="headerlink" title="2. host"></a>2. <strong>host</strong></h3><ul>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>容器 <strong>不再有独立的网络命名空间</strong>，直接使用宿主机的网络栈。</li>
+<li>容器和宿主机 <strong>共享 IP 和端口</strong>，没有 NAT。</li>
+<li>启动时指定 <code>--network host</code>。</li>
+</ul>
+</li>
+<li><p><strong>优点</strong>：性能最好，没有 NAT 转换；适合需要和宿主机高度集成的服务，比如监控、日志采集。</p>
+</li>
+<li><p><strong>缺点</strong>：端口冲突（容器占用的端口就是宿主机的端口），隔离性差。</p>
+</li>
+</ul>
+<hr>
+<h3 id="3-none"><a href="#3-none" class="headerlink" title="3. none"></a>3. <strong>none</strong></h3><ul>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>容器完全没有网络接口（除了 <code>lo</code> 回环）。</li>
+<li>适合需要完全自定义网络配置的场景（比如自己在容器里跑 VPN client）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="4-container"><a href="#4-container" class="headerlink" title="4. container"></a>4. <strong>container</strong></h3><ul>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>新容器和指定的已有容器 <strong>共享网络命名空间</strong>。</li>
+<li>相当于两个容器共用同一个网络接口和 IP。</li>
+</ul>
+</li>
+<li><p><strong>使用方式</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name c1 busybox <span class="built_in">sleep</span> 3600</span><br><span class="line">docker run -it --network container:c1 busybox sh</span><br></pre></td></tr></table></figure>
+
+<p><code>c1</code> 和新容器共享网络。</p>
+</li>
+<li><p><strong>应用场景</strong>：当你希望两个容器看起来像在同一台机器上（例如应用和 sidecar）。</p>
+</li>
+</ul>
+<hr>
+<h3 id="5-自定义-bridge-网络"><a href="#5-自定义-bridge-网络" class="headerlink" title="5. 自定义 bridge 网络"></a>5. <strong>自定义 bridge 网络</strong></h3><ul>
+<li><p>默认的 <code>bridge</code> 网络用容器名互相访问不方便，所以推荐创建自定义 bridge。</p>
+</li>
+<li><p>命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker network create mynet</span><br><span class="line">docker run -d --network mynet --name app nginx</span><br><span class="line">docker run -it --network mynet busybox ping app</span><br></pre></td></tr></table></figure></li>
+<li><p>容器可以通过 <strong>名字直接 DNS 解析</strong>，更适合微服务。</p>
+</li>
+</ul>
+<hr>
+<h3 id="6-overlay-网络（Swarm-K8s-用）"><a href="#6-overlay-网络（Swarm-K8s-用）" class="headerlink" title="6. overlay 网络（Swarm&#x2F;K8s 用）"></a>6. <strong>overlay 网络（Swarm&#x2F;K8s 用）</strong></h3><ul>
+<li>用于 <strong>跨主机容器通信</strong>。</li>
+<li>需要 Docker Swarm&#x2F;K8s 支持。</li>
+<li>主要用于多节点部署。</li>
+</ul>
+<hr>
+<h2 id="🔹-对比总结"><a href="#🔹-对比总结" class="headerlink" title="🔹 对比总结"></a>🔹 对比总结</h2><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>容器是否有独立 IP</th>
+<th>是否需要端口映射</th>
+<th>场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bridge（默认）</td>
+<td>✅ 有</td>
+<td>✅ 需要</td>
+<td>最常用，默认模式</td>
+</tr>
+<tr>
+<td>host</td>
+<td>❌ 无（用宿主机 IP）</td>
+<td>❌ 无（共享端口）</td>
+<td>高性能、无 NAT</td>
+</tr>
+<tr>
+<td>none</td>
+<td>❌ 无</td>
+<td>❌ 无</td>
+<td>特殊情况，需要完全自定义</td>
+</tr>
+<tr>
+<td>container</td>
+<td>❌（共享已有容器 IP）</td>
+<td>❌</td>
+<td>Sidecar、共享网络</td>
+</tr>
+<tr>
+<td>自定义 bridge</td>
+<td>✅ 有</td>
+<td>✅</td>
+<td>推荐应用服务之间通信</td>
+</tr>
+<tr>
+<td>overlay</td>
+<td>✅ 有</td>
+<td>✅</td>
+<td>多主机、集群场景</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="🔹-实际开发-生产的使用建议"><a href="#🔹-实际开发-生产的使用建议" class="headerlink" title="🔹 实际开发&#x2F;生产的使用建议"></a>🔹 实际开发&#x2F;生产的使用建议</h2><ol>
+<li><p><strong>开发环境</strong></p>
+<ul>
+<li>用自定义 <code>bridge</code>，方便用服务名互相访问。</li>
+<li>例如：<code>docker-compose</code> 默认会创建自定义网络。</li>
+</ul>
+</li>
+<li><p><strong>单机生产</strong></p>
+<ul>
+<li>如果追求性能（比如数据库容器），用 <code>--network host</code>。</li>
+<li>普通服务还是用自定义 bridge + 端口映射。</li>
+</ul>
+</li>
+<li><p><strong>集群环境（Swarm &#x2F; K8s）</strong></p>
+<ul>
+<li>用 <code>overlay</code> 或者 <code>CNI 插件</code>（K8s 默认用 flannel、calico 等）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/08/20/%E5%89%8D%E7%AB%AF/Vue%E7%9A%84hash%E4%B8%8Ehistory%E6%A8%A1%E5%BC%8F/" rel="prev" title="Vue的hash与history模式">
+                  <i class="fa fa-angle-left"></i> Vue的hash与history模式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/08/22/%E5%89%8D%E7%AB%AF/nginx%E5%8F%8D%E4%BB%A3cookie/" rel="next" title="nginx反代cookie">
+                  nginx反代cookie <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
