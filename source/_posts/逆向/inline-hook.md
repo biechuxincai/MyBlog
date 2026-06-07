@@ -3,9 +3,9 @@ title: inline-hook
 toc: true
 description: 五分钟带你手搓一个简易的 inline hook 实现控制流劫持
 tags:
-  - null
+  - 逆向
 categories:
-  - null
+  - 逆向
 date: 2025-12-25 22:05:33
 ---
 

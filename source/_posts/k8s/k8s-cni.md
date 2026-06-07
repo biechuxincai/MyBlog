@@ -4,9 +4,9 @@ toc: true
 description:  CNI 是怎么把 K8s、容器运行时（Docker / containerd）和网络插件（Flannel / Cilium）真正串起来的从机制层给你拆清楚。
 
 tags:
-  - null
+  - k8s
 categories:
-  - null
+  - k8s
 date: 2025-12-28 22:57:13
 ---
  **CNI 是怎么把 K8s、容器运行时（Docker / containerd）和网络插件（Flannel / Cilium）真正串起来的** 从**机制层**给你拆清楚。

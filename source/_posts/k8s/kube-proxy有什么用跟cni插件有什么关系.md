@@ -3,9 +3,9 @@ title: kube-proxy有什么用跟cni插件有什么关系
 toc: true
 description: more
 tags:
-  - null
+  - k8s
 categories:
-  - null
+  - k8s
 date: 2025-12-28 23:26:18
 ---
 这个问题问得**非常到位，而且已经到 K8s 网络“核心层”了**。

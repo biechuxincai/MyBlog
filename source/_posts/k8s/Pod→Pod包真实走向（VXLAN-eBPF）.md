@@ -3,9 +3,9 @@ title: Pod→Pod包真实走向（VXLAN/eBPF）
 toc: true
 description: more
 tags:
-  - null
+  - k8s
 categories:
-  - null
+  - k8s
 date: 2025-12-28 22:58:23
 ---
 好，这个点非常值得**彻底吃透**。

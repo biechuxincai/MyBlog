@@ -3,9 +3,9 @@ title: k8s_如果去掉service只用ingress
 toc: true
 description: more
 tags:
-  - null
+  - k8s
 categories:
-  - null
+  - k8s
 date: 2025-12-28 22:56:02
 ---
 这个问题问得**非常好，而且很“架构向”**。结论我先放前面，然后慢慢拆开讲清楚：

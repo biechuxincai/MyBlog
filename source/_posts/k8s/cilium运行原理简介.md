@@ -3,9 +3,9 @@ title: cilium运行原理简介
 toc: true
 description: more
 tags:
-  - null
+  - k8s
 categories:
-  - null
+  - k8s
 date: 2025-12-28 23:30:56
 ---
 这个问题问得已经不是「怎么用 Cilium」，而是**在问它“到底重写了 Linux 网络的哪一层、用了什么模型”**。
