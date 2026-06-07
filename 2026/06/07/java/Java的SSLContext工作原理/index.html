@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="SSLContext 是 HTTPS、TLS、mTLS、OAuth2、OpenID Connect、Spring Security、HttpClient、Kafka、Redis SSL 等所有安全通信的底层核心">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java的SSLContext工作原理">
+<meta property="og:url" content="http://example.com/2026/06/07/java/Java%E7%9A%84SSLContext%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Just do it">
+<meta property="og:description" content="SSLContext 是 HTTPS、TLS、mTLS、OAuth2、OpenID Connect、Spring Security、HttpClient、Kafka、Redis SSL 等所有安全通信的底层核心">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-07T02:11:18.000Z">
+<meta property="article:modified_time" content="2026-06-07T02:12:08.850Z">
+<meta property="article:author" content="Biechuxincai">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2026/06/07/java/Java%E7%9A%84SSLContext%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2026/06/07/java/Java%E7%9A%84SSLContext%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/","path":"2026/06/07/java/Java的SSLContext工作原理/","title":"Java的SSLContext工作原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java的SSLContext工作原理 | Just do it</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Just do it</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81SSLContext%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">一、SSLContext是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">二、整体架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%8D%95%E5%90%91TLS"><span class="nav-number">3.</span> <span class="nav-text">三、单向TLS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%8F%8C%E5%90%91TLS%EF%BC%88mTLS%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">四、双向TLS（mTLS）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81SSLContext%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">5.</span> <span class="nav-text">五、SSLContext初始化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E3%80%81KeyManager%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">6.</span> <span class="nav-text">六、KeyManager是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%83%E3%80%81TrustManager%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">7.</span> <span class="nav-text">七、TrustManager是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AB%E3%80%81KeyStore%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">8.</span> <span class="nav-text">八、KeyStore是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B9%9D%E3%80%81TrustStore%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">9.</span> <span class="nav-text">九、TrustStore是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E3%80%81TLS%E6%8F%A1%E6%89%8B%E6%97%B6SSLContext%E5%B9%B2%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">10.</span> <span class="nav-text">十、TLS握手时SSLContext干了什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Client-Hello"><span class="nav-number">10.0.1.</span> <span class="nav-text">Client Hello</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Server-Hello"><span class="nav-number">10.0.2.</span> <span class="nav-text">Server Hello</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSLContext"><span class="nav-number">10.0.3.</span> <span class="nav-text">SSLContext</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E6%9C%80%E7%BB%8F%E5%85%B8%E6%8A%A5%E9%94%99"><span class="nav-number">11.</span> <span class="nav-text">十一、最经典报错</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PKIX-path-building-failed"><span class="nav-number">11.1.</span> <span class="nav-text">PKIX path building failed</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E5%BE%88%E5%A4%9A%E5%85%AC%E5%8F%B8%E8%BF%99%E6%A0%B7%E5%85%B3%E9%97%AD%E9%AA%8C%E8%AF%81"><span class="nav-number">12.</span> <span class="nav-text">十二、很多公司这样关闭验证</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81Spring-Boot%E9%87%8C%E9%9D%A2%E5%9C%A8%E5%93%AA%E9%87%8C"><span class="nav-number">13.</span> <span class="nav-text">十三、Spring Boot里面在哪里</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81SSLSocket-%E5%92%8C-SSLEngine"><span class="nav-number">14.</span> <span class="nav-text">十四、SSLSocket 和 SSLEngine</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81JDK%E9%87%8C%E7%9A%84%E7%9C%9F%E5%AE%9E%E5%AE%9E%E7%8E%B0"><span class="nav-number">15.</span> <span class="nav-text">十五、JDK里的真实实现</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Biechuxincai"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Biechuxincai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/biechuxincai" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;biechuxincai" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:bukaixinya@gmail.com" title="E-Mail → mailto:bukaixinya@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2026/06/07/java/Java%E7%9A%84SSLContext%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Biechuxincai">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just do it">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java的SSLContext工作原理 | Just do it">
+      <meta itemprop="description" content="SSLContext 是 HTTPS、TLS、mTLS、OAuth2、OpenID Connect、Spring Security、HttpClient、Kafka、Redis SSL 等所有安全通信的底层核心">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java的SSLContext工作原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-06-07 10:11:18 / 修改时间：10:12:08" itemprop="dateCreated datePublished" datetime="2026-06-07T10:11:18+08:00">2026-06-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">SSLContext 是 HTTPS、TLS、mTLS、OAuth2、OpenID Connect、Spring Security、HttpClient、Kafka、Redis SSL 等所有安全通信的底层核心</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>SSLContext 是 HTTPS、TLS、mTLS、OAuth2、OpenID Connect、Spring Security、HttpClient、Kafka、Redis SSL 等所有安全通信的底层核心。</p>
+<p>很多人配置过：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SSLContext</span> <span class="variable">sslContext</span> <span class="operator">=</span> SSLContext.getInstance(<span class="string">&quot;TLS&quot;</span>);</span><br><span class="line">sslContext.init(...);</span><br></pre></td></tr></table></figure>
+
+<p>但不知道它到底在干什么。</p>
+<p>实际上 SSLContext 可以理解为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TLS运行时环境</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TLS协议栈实例</span><br></pre></td></tr></table></figure>
+
+<p>类似于：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">JDBC</span><br><span class="line">    ↓</span><br><span class="line">Connection</span><br><span class="line"></span><br><span class="line">TLS</span><br><span class="line">    ↓</span><br><span class="line">SSLContext</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="一、SSLContext是什么"><a href="#一、SSLContext是什么" class="headerlink" title="一、SSLContext是什么"></a>一、SSLContext是什么</h1><p>Java中的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javax.net.ssl.SSLContext</span><br></pre></td></tr></table></figure>
+
+<p>负责管理：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">证书</span><br><span class="line">私钥</span><br><span class="line">信任链</span><br><span class="line">TLS协议</span><br><span class="line">加密套件</span><br><span class="line">随机数生成器</span><br></pre></td></tr></table></figure>
+
+<p>它本身不进行网络通信。</p>
+<p>真正通信的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SSLSocket</span><br><span class="line"></span><br><span class="line">SSLEngine</span><br><span class="line"></span><br><span class="line">HttpsURLConnection</span><br><span class="line"></span><br><span class="line">HttpClient</span><br></pre></td></tr></table></figure>
+
+<p>这些对象。</p>
+<p>而它们都依赖：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SSLContext</span><br></pre></td></tr></table></figure>
+
+<p>提供安全能力。</p>
+<hr>
+<h1 id="二、整体架构"><a href="#二、整体架构" class="headerlink" title="二、整体架构"></a>二、整体架构</h1><p>可以理解为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">             SSLContext</span><br><span class="line">                   │</span><br><span class="line">       ┌───────────┴───────────┐</span><br><span class="line">       │                       │</span><br><span class="line">TrustManager             KeyManager</span><br><span class="line">       │                       │</span><br><span class="line">验证别人证书             提供自己的证书</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>其中：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TrustManager</span><br></pre></td></tr></table></figure>
+
+<p>负责：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我信任谁</span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KeyManager</span><br></pre></td></tr></table></figure>
+
+<p>负责：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我是谁</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>这是整个TLS最核心的思想。</p>
+<hr>
+<h1 id="三、单向TLS"><a href="#三、单向TLS" class="headerlink" title="三、单向TLS"></a>三、单向TLS</h1><p>普通HTTPS：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">浏览器</span><br><span class="line">     ↓</span><br><span class="line">服务器</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>浏览器验证服务器。</p>
+<p>服务器不验证浏览器。</p>
+<hr>
+<p>即：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">客户端</span><br><span class="line">    TrustManager</span><br><span class="line"></span><br><span class="line">服务器</span><br><span class="line">    KeyManager</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>浏览器：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">验证服务器证书</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>服务器：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">出示自己的证书</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>就是这样。</p>
+<hr>
+<h1 id="四、双向TLS（mTLS）"><a href="#四、双向TLS（mTLS）" class="headerlink" title="四、双向TLS（mTLS）"></a>四、双向TLS（mTLS）</h1><p>很多企业内部系统：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">支付系统</span><br><span class="line"></span><br><span class="line">银行系统</span><br><span class="line"></span><br><span class="line">微服务调用</span><br></pre></td></tr></table></figure>
+
+<p>会使用：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mutual TLS</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>即：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">客户端验证服务器</span><br><span class="line"></span><br><span class="line">服务器验证客户端</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>流程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Client</span><br><span class="line">    ↓证书</span><br><span class="line">Server</span><br><span class="line"></span><br><span class="line">Server</span><br><span class="line">    ↓证书</span><br><span class="line">Client</span><br></pre></td></tr></table></figure>
+
+<p>双方都要提供证书。</p>
+<hr>
+<p>SSLContext中：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TrustManager</span><br></pre></td></tr></table></figure>
+
+<p>验证对方。</p>
+<hr>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KeyManager</span><br></pre></td></tr></table></figure>
+
+<p>提供自己证书。</p>
+<hr>
+<p>因此：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">客户端</span><br><span class="line">    KeyManager</span><br><span class="line">    TrustManager</span><br><span class="line"></span><br><span class="line">服务器</span><br><span class="line">    KeyManager</span><br><span class="line">    TrustManager</span><br></pre></td></tr></table></figure>
+
+<p>都需要。</p>
+<hr>
+<h1 id="五、SSLContext初始化"><a href="#五、SSLContext初始化" class="headerlink" title="五、SSLContext初始化"></a>五、SSLContext初始化</h1><p>最经典代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SSLContext</span> <span class="variable">sslContext</span> <span class="operator">=</span></span><br><span class="line">    SSLContext.getInstance(<span class="string">&quot;TLS&quot;</span>);</span><br><span class="line"></span><br><span class="line">sslContext.init(</span><br><span class="line">    keyManagers,</span><br><span class="line">    trustManagers,</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">SecureRandom</span>()</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>这里有三个参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">init(</span><br><span class="line">    KeyManager[],</span><br><span class="line">    TrustManager[],</span><br><span class="line">    SecureRandom</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="六、KeyManager是什么"><a href="#六、KeyManager是什么" class="headerlink" title="六、KeyManager是什么"></a>六、KeyManager是什么</h1><p>负责：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">提供证书</span><br><span class="line">提供私钥</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>例如：</p>
+<p>服务器有：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server.crt</span><br><span class="line">server.key</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>TLS握手：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Client Hello</span><br><span class="line"></span><br><span class="line">Server Hello</span><br><span class="line"></span><br><span class="line">Certificate</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Certificate</span><br></pre></td></tr></table></figure>
+
+<p>阶段。</p>
+<hr>
+<p>SSLContext会调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KeyManager</span><br></pre></td></tr></table></figure>
+
+<p>获取：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">证书链</span><br><span class="line"></span><br><span class="line">私钥</span><br></pre></td></tr></table></figure>
+
+<p>发送给客户端。</p>
+<hr>
+<p>因此：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KeyManager</span><br></pre></td></tr></table></figure>
+
+<p>本质：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">证书提供者</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="七、TrustManager是什么"><a href="#七、TrustManager是什么" class="headerlink" title="七、TrustManager是什么"></a>七、TrustManager是什么</h1><p>负责：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">验证对方证书</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>例如：</p>
+<p>收到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">www.google.com</span><br></pre></td></tr></table></figure>
+
+<p>证书。</p>
+<hr>
+<p>SSLContext调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TrustManager</span><br></pre></td></tr></table></figure>
+
+<p>检查：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CA签名</span><br><span class="line"></span><br><span class="line">域名</span><br><span class="line"></span><br><span class="line">有效期</span><br><span class="line"></span><br><span class="line">证书链</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>验证成功：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TLS继续</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>失败：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SSLHandshakeException</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="八、KeyStore是什么"><a href="#八、KeyStore是什么" class="headerlink" title="八、KeyStore是什么"></a>八、KeyStore是什么</h1><p>很多人把：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SSLContext</span><br><span class="line"></span><br><span class="line">KeyManager</span><br><span class="line"></span><br><span class="line">KeyStore</span><br></pre></td></tr></table></figure>
+
+<p>搞混。</p>
+<hr>
+<p>KeyStore：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">证书仓库</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>里面存：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">私钥</span><br><span class="line"></span><br><span class="line">证书</span><br><span class="line"></span><br><span class="line">证书链</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>常见：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JKS</span><br><span class="line"></span><br><span class="line">PKCS12</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server.p12</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>加载：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">KeyStore</span> <span class="variable">ks</span> <span class="operator">=</span></span><br><span class="line">    KeyStore.getInstance(<span class="string">&quot;PKCS12&quot;</span>);</span><br><span class="line"></span><br><span class="line">ks.load(...);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="九、TrustStore是什么"><a href="#九、TrustStore是什么" class="headerlink" title="九、TrustStore是什么"></a>九、TrustStore是什么</h1><p>TrustStore也是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KeyStore</span><br></pre></td></tr></table></figure>
+
+<p>一种。</p>
+<hr>
+<p>区别：</p>
+<p>普通KeyStore：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">存自己的证书</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>TrustStore：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">存信任的CA</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cacerts</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>JDK默认：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JAVA_HOME/lib/security/cacerts</span><br></pre></td></tr></table></figure>
+
+<p>（不同版本路径略有差异）</p>
+<hr>
+<p>里面有：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DigiCert</span><br><span class="line"></span><br><span class="line">GlobalSign</span><br><span class="line"></span><br><span class="line">Let&#x27;s Encrypt</span><br></pre></td></tr></table></figure>
+
+<p>等根证书。</p>
+<hr>
+<h1 id="十、TLS握手时SSLContext干了什么"><a href="#十、TLS握手时SSLContext干了什么" class="headerlink" title="十、TLS握手时SSLContext干了什么"></a>十、TLS握手时SSLContext干了什么</h1><p>假设：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HttpClient</span><br></pre></td></tr></table></figure>
+
+<p>访问：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://api.example.com</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>流程：</p>
+<h3 id="Client-Hello"><a href="#Client-Hello" class="headerlink" title="Client Hello"></a>Client Hello</h3><p>发送：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TLS版本</span><br><span class="line"></span><br><span class="line">Cipher Suites</span><br><span class="line"></span><br><span class="line">随机数</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Server-Hello"><a href="#Server-Hello" class="headerlink" title="Server Hello"></a>Server Hello</h3><p>服务器返回：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">证书</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="SSLContext"><a href="#SSLContext" class="headerlink" title="SSLContext"></a>SSLContext</h3><p>调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TrustManager</span><br></pre></td></tr></table></figure>
+
+<p>验证：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">证书链</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>验证：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Leaf</span><br><span class="line"> ↓</span><br><span class="line">Intermediate</span><br><span class="line"> ↓</span><br><span class="line">Root</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>一直到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cacerts</span><br></pre></td></tr></table></figure>
+
+<p>中的根证书。</p>
+<hr>
+<p>成功：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">继续握手</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>失败：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SSLHandshakeException</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十一、最经典报错"><a href="#十一、最经典报错" class="headerlink" title="十一、最经典报错"></a>十一、最经典报错</h1><h2 id="PKIX-path-building-failed"><a href="#PKIX-path-building-failed" class="headerlink" title="PKIX path building failed"></a>PKIX path building failed</h2><p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PKIX path building failed</span><br><span class="line">unable to find valid certification path</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>意思：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">找不到可信CA</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>不是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">网络问题</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>而是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TrustStore里面没有对应根证书</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>解决：</p>
+<p>导入证书：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -importcert</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十二、很多公司这样关闭验证"><a href="#十二、很多公司这样关闭验证" class="headerlink" title="十二、很多公司这样关闭验证"></a>十二、很多公司这样关闭验证</h1><p>开发环境经常看到：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">TrustManager[] trustAll =</span><br><span class="line">&#123;</span><br><span class="line">   <span class="keyword">new</span> <span class="title class_">X509TrustManager</span>()</span><br><span class="line">   &#123;</span><br><span class="line">       <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">checkServerTrusted</span><span class="params">(...)</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">checkClientTrusted</span><span class="params">(...)</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">public</span> X509Certificate[]</span><br><span class="line">           getAcceptedIssuers()</span><br><span class="line">       &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>然后：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sslContext.init(</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    trustAll,</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">SecureRandom</span>()</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>效果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">信任所有证书</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>相当于：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">证书验证彻底关闭</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>开发环境方便。</p>
+<p>生产环境危险。</p>
+<hr>
+<h1 id="十三、Spring-Boot里面在哪里"><a href="#十三、Spring-Boot里面在哪里" class="headerlink" title="十三、Spring Boot里面在哪里"></a>十三、Spring Boot里面在哪里</h1><p>例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">ssl:</span></span><br><span class="line">    <span class="attr">key-store:</span> <span class="string">server.p12</span></span><br><span class="line">    <span class="attr">key-store-password:</span> <span class="number">123456</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>Spring Boot启动：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Tomcat</span><br><span class="line">    ↓</span><br><span class="line">SSLContext</span><br><span class="line">    ↓</span><br><span class="line">KeyManager</span><br><span class="line">    ↓</span><br><span class="line">读取server.p12</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>最终：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HTTPS端口启动</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十四、SSLSocket-和-SSLEngine"><a href="#十四、SSLSocket-和-SSLEngine" class="headerlink" title="十四、SSLSocket 和 SSLEngine"></a>十四、SSLSocket 和 SSLEngine</h1><p>SSLContext最终会生成：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SSLSocket</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SSLEngine</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>SSLSocket：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">阻塞IO</span><br></pre></td></tr></table></figure>
+
+<p>传统模式。</p>
+<hr>
+<p>SSLEngine：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NIO</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<ul>
+<li>Netty</li>
+<li>Tomcat NIO</li>
+<li>Undertow</li>
+<li>gRPC</li>
+</ul>
+<p>底层大量使用。</p>
+<hr>
+<p>架构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SSLContext</span><br><span class="line">    ↓</span><br><span class="line">SSLEngine</span><br><span class="line">    ↓</span><br><span class="line">TLS协议实现</span><br><span class="line">    ↓</span><br><span class="line">Socket</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十五、JDK里的真实实现"><a href="#十五、JDK里的真实实现" class="headerlink" title="十五、JDK里的真实实现"></a>十五、JDK里的真实实现</h1><p>你写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SSLContext.getInstance(<span class="string">&quot;TLS&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>实际上得到的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SunJSSE</span><br></pre></td></tr></table></figure>
+
+<p>实现。</p>
+<p>JSSE 全称：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Java Secure Socket Extension</span><br></pre></td></tr></table></figure>
+
+<p>它是 Java TLS 的官方实现。</p>
+<hr>
+<p>完整关系图可以记成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">SSLContext</span><br><span class="line">│</span><br><span class="line">├── KeyManager</span><br><span class="line">│      └── 我的证书和私钥</span><br><span class="line">│</span><br><span class="line">├── TrustManager</span><br><span class="line">│      └── 我信任的CA</span><br><span class="line">│</span><br><span class="line">├── SecureRandom</span><br><span class="line">│</span><br><span class="line">├── SSLSocket</span><br><span class="line">│</span><br><span class="line">└── SSLEngine</span><br></pre></td></tr></table></figure>
+
+<p>从 TLS 握手角度看：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">KeyManager</span><br><span class="line">      ↓</span><br><span class="line">发送自己的证书</span><br><span class="line"></span><br><span class="line">TrustManager</span><br><span class="line">      ↓</span><br><span class="line">验证对方证书</span><br><span class="line"></span><br><span class="line">SSLContext</span><br><span class="line">      ↓</span><br><span class="line">组织整个TLS握手</span><br><span class="line"></span><br><span class="line">SSLEngine/SSLSocket</span><br><span class="line">      ↓</span><br><span class="line">真正执行加解密通信</span><br></pre></td></tr></table></figure>
+
+<p>所以一句话总结：</p>
+<blockquote>
+<p>SSLContext 是 Java TLS 体系的总控制器，它管理证书、私钥、信任链和加密参数；KeyManager 负责“证明我是谁”，TrustManager 负责“判断你是谁”，两者共同完成 TLS 握手和安全通信。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/06/07/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8/https%E5%85%A8%E9%93%BE%E8%B7%AF%E5%88%86%E6%9E%90/" rel="prev" title="https全链路分析">
+                  <i class="fa fa-angle-left"></i> https全链路分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Biechuxincai</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/biechuxincai" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="wavedrom" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/wavedrom.min.js","integrity":"sha256-INLAoJc6quTNfiMWkGZniYO2cxE8mHpddnLow1m6RFs="}}</script>
+  <script class="next-config" data-name="wavedrom_skin" type="application/json">{"enable":true,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/wavedrom/3.5.0/skins/default.js","integrity":"sha256-fduc/Zszk5ezWws2uInY/ALWVmIrmV6VTgXbsYSReFI="}}</script>
+  <script src="/js/third-party/tags/wavedrom.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
